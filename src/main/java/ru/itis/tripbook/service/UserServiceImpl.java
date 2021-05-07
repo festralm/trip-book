@@ -1,6 +1,7 @@
 package ru.itis.tripbook.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.itis.tripbook.dto.UserAdminDto;
 import ru.itis.tripbook.dto.UserDto;
@@ -16,9 +17,15 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format("Email %s not found.", email)));
+    }
+
     @Override
     public UserDto getUserById(Long id) throws UserIsBlockedException, UserIsDeletedException {
-        User user = userRepository.getOne(id);
+        var user = userRepository.getOne(id);
         if (user.getIsBlocked() != null) {
             throw new UserIsBlockedException(user.getEmail());
         }
@@ -30,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserAdminDto> getUsersForAdmin() {
-        List<User> users = userRepository.findAll();
+        var users = userRepository.findAll();
         return UserAdminDto.from(users);
     }
 

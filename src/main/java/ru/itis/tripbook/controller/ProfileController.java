@@ -11,6 +11,7 @@ import ru.itis.tripbook.exception.UserIsDeletedException;
 import ru.itis.tripbook.response.MyResponse;
 import ru.itis.tripbook.service.UserService;
 
+import javax.annotation.security.PermitAll;
 import java.util.List;
 
 @RestController
@@ -30,7 +31,8 @@ public class ProfileController {
     })
     @GetMapping("/users/{id}")
     @ResponseBody
-    public ResponseEntity<Object> getUserById(@PathVariable Long id) {
+    @PermitAll
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         UserDto userDto = null;
         try {
             userDto = userService.getUserById(id);
