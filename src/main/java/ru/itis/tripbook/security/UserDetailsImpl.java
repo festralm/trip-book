@@ -1,5 +1,6 @@
 package ru.itis.tripbook.security;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +9,7 @@ import ru.itis.tripbook.model.User;
 import java.util.Collection;
 import java.util.Collections;
 
+@Data
 public class UserDetailsImpl implements UserDetails {
     private final User user;
 

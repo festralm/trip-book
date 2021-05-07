@@ -3,7 +3,7 @@ package ru.itis.tripbook.dto;
 import lombok.Data;
 
 @Data
-public class UserSignInDto {
+public class UserForm {
     private String email;
     private String password;
 }
