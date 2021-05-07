@@ -21,9 +21,15 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
+
+    @ApiOperation(value = "Получить список всех пользователей")
+    @ApiResponses(value = {@ApiResponse(code = 200,
+            message = "Успешно получено",
+            response = UserDto.class,
+            responseContainer = "List")})
     @GetMapping("/users")
-    public List<UserDto> getAllUsers() {
-        return userService.getUsers();
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getUsers());
     }
 
     @ApiOperation(value = "Получить пользователя по id")
