@@ -5,7 +5,7 @@ import ru.itis.tripbook.model.User;
 
 import java.util.Optional;
 
-public interface UsersRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 }

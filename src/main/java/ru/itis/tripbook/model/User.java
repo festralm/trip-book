@@ -22,4 +22,14 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String hashPassword;
+
+    @Column
+    private Boolean isDeleted;
+
+    @Column
+    private Boolean isBlocked;
+
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+
 }

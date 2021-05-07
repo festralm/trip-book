@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.itis.tripbook.model.Role;
 import ru.itis.tripbook.model.User;
 
 import java.util.List;
@@ -15,18 +16,24 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Builder
 @ApiModel
-public class UserDto {
+public class UserAdminDto {
     private String email;
+    private Boolean isBlocked;
+    private Boolean isDeleted;
+    private Role role;
 
-    public static UserDto from(User user) {
-        return UserDto.builder()
+    public static UserAdminDto from(User user) {
+        return UserAdminDto.builder()
                 .email(user.getEmail())
+                .isBlocked(user.getIsBlocked())
+                .isDeleted(user.getIsDeleted())
+                .role(user.getRole())
                 .build();
     }
 
-    public static List<UserDto> from(List<User> users) {
+    public static List<UserAdminDto> from(List<User> users) {
         return users.stream()
-                .map(UserDto::from)
+                .map(UserAdminDto::from)
                 .collect(Collectors.toList());
     }
 }

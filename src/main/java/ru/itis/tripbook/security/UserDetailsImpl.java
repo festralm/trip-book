@@ -1,13 +1,16 @@
 package ru.itis.tripbook.security;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.itis.tripbook.model.User;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
     private final User user;
+
 
     public UserDetailsImpl(User user) {
         this.user = user;
@@ -15,7 +18,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.singleton(new SimpleGrantedAuthority(user.getRole().toString()));
     }
 
     @Override
@@ -35,7 +38,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return user.getIsBlocked() == null;
     }
 
     @Override
@@ -45,6 +48,6 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getIsDeleted() == null;
     }
 }
