@@ -4,18 +4,18 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
-import ru.itis.tripbook.dto.UserForm;
+import ru.itis.tripbook.dto.UserSignInForm;
 import ru.itis.tripbook.security.jwt.JwtTokenProvider;
 import ru.itis.tripbook.service.UserService;
 
 import javax.annotation.security.PermitAll;
-import java.util.HashMap;
 
 @RequestMapping("/sign-in")
 @RestController
@@ -39,16 +39,19 @@ public class SignInController {
                     message = "Неправильный логин или пароль")
     })
     @PostMapping
-    public ResponseEntity<?> authenticate(@RequestBody UserForm user) {
+    public ResponseEntity<?> authenticate(@RequestBody UserSignInForm user) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
             var newUser = userService.findByEmail(user.getEmail());
             var token = jwtTokenProvider.create(newUser.getEmail(), newUser.getRole());
-            var response = new HashMap<Object, Object>();
-            response.put("email", user.getEmail());
-            response.put("token", token);
-
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok()
+                    .header(
+                            HttpHeaders.AUTHORIZATION,
+                            token
+                    )
+                    .body(
+                            newUser
+                    );
         } catch (AuthenticationException exception) {
             return new ResponseEntity<>("Invalid email/password combination", HttpStatus.FORBIDDEN);
         }

@@ -7,18 +7,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.itis.tripbook.dto.UserAdminDto;
 import ru.itis.tripbook.dto.UserDto;
 import ru.itis.tripbook.exception.UserIsBlockedException;
 import ru.itis.tripbook.exception.UserIsDeletedException;
+import ru.itis.tripbook.exception.UserNotFoundException;
 import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.response.MyResponse;
 import ru.itis.tripbook.security.UserDetailsImpl;
-import ru.itis.tripbook.security.UserDetailsServiceImpl;
 import ru.itis.tripbook.service.UserService;
 
 import javax.annotation.security.PermitAll;
-import java.util.List;
 
 @RestController
 public class ProfileController {
@@ -33,14 +31,16 @@ public class ProfileController {
             @ApiResponse(code = 410,
                     message = "Пользователь заблокирован"),
             @ApiResponse(code = 404,
-                    message = "Пользователь удален")
+                    message = "Пользователь удален"),
+            @ApiResponse(code = 204,
+                    message = "Пользователь с таким id не найден")
     })
     @GetMapping("/users/{id}")
     @PermitAll
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         UserDto userDto = null;
         try {
-            userDto = userService.getUserById(id);
+            userDto = userService.getUserByIdForUser(id);
         } catch (UserIsBlockedException e) {
             return ResponseEntity
                     .status(HttpStatus.GONE)
@@ -49,6 +49,8 @@ public class ProfileController {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(MyResponse.USER_DELETED);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>("User is not found", HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(userDto);
     }
