@@ -10,8 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.itis.tripbook.dto.UserSignInForm;
+import ru.itis.tripbook.security.UserDetailsImpl;
 import ru.itis.tripbook.security.jwt.JwtTokenProvider;
 import ru.itis.tripbook.service.UserService;
 
@@ -30,14 +32,6 @@ public class SignInController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @ApiOperation(value = "Аутентифицировать пользователя")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200,
-                    message = "Успешно",
-                    responseContainer = "HashMap"),
-            @ApiResponse(code = 403,
-                    message = "Неправильный логин или пароль")
-    })
     @PostMapping
     public ResponseEntity<?> authenticate(@RequestBody UserSignInForm user) {
         try {
@@ -53,30 +47,9 @@ public class SignInController {
                             newUser
                     );
         } catch (AuthenticationException exception) {
-            return new ResponseEntity<>("Invalid email/password combination", HttpStatus.FORBIDDEN);
+            return ResponseEntity.ok()
+                    .body(new MyResponseBody(MyStatus.WRONG_AUTH));
         }
     }
 
-    @ApiOperation(value = "Получить страницу \"Войти\"")
-    @GetMapping
-    @ResponseBody
-    public String getSignInPage() {
-        return "<!DOCTYPE html>\n" +
-                "<html lang=\"en\">\n" +
-                "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <title>Войти</title>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "<form action=\"/sign-in\" method=\"post\">\n" +
-                "    <input type=\"email\" name=\"username\">\n" +
-                "    <input type=\"password\" name=\"password\">\n" +
-                "    <label>\n" +
-                "        <input type=\"checkbox\" name=\"remember-me\">Запомни меня\n" +
-                "        </label>\n" +
-                "    <input type=\"submit\" value=\"Войти\">\n" +
-                "    </form>\n" +
-                "</body>\n" +
-                "</html>\n";
-    }
 }

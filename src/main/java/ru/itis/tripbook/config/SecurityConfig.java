@@ -1,8 +1,10 @@
 package ru.itis.tripbook.config;
 
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -25,6 +27,8 @@ import ru.itis.tripbook.model.Role;
 import ru.itis.tripbook.security.jwt.JwtConfigurer;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -50,6 +54,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .and()
                 .apply(jwtConfigurer)
+        .and()
+        .logout()
+        .logoutSuccessUrl("/")
+        .logoutUrl("/logout")
         ;
     }
 
@@ -77,9 +85,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
+        config.addAllowedOrigin("http://localhost:8080");
         config.addAllowedHeader("*");
+        config.addAllowedHeader(HttpHeaders.AUTHORIZATION);
+        config.setExposedHeaders(Collections.singletonList(HttpHeaders.AUTHORIZATION));
         config.addAllowedMethod("*");
+        config.addAllowedMethod(HttpMethod.POST.name());
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

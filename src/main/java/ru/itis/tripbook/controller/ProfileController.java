@@ -23,18 +23,6 @@ public class ProfileController {
     @Autowired
     private UserService userService;
 
-    @ApiOperation(value = "Получить пользователя по id")
-    @ApiResponses(value = {
-            @ApiResponse(code = 200,
-                    message = "Успешно получено",
-                    response = UserDto.class),
-            @ApiResponse(code = 410,
-                    message = "Пользователь заблокирован"),
-            @ApiResponse(code = 404,
-                    message = "Пользователь удален"),
-            @ApiResponse(code = 204,
-                    message = "Пользователь с таким id не найден")
-    })
     @GetMapping("/users/{id}")
     @PermitAll
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
@@ -55,10 +43,6 @@ public class ProfileController {
         return ResponseEntity.ok(userDto);
     }
 
-    @ApiOperation(value = "Получить профиль пользователя")
-    @ApiResponses(value = {@ApiResponse(code = 200,
-            message = "Успешно получено",
-            response = User.class)})
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
     public ResponseEntity<User> getProfilePage(@AuthenticationPrincipal UserDetailsImpl user) {

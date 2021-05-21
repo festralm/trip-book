@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyTakenException(user.getEmail());
         } catch (UsernameNotFoundException exception) {
             User newUser = User.builder()
+                    .phoneNumber(user.getPhoneNumber())
                     .email(user.getEmail())
                     .hashPassword(passwordEncoder.encode(user.getPassword()))
                     .role(Role.USER)
@@ -130,8 +131,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserAdminDto> findUsers(Long id, String email) {
-        return UserAdminDto.from(userRepository.findUsersByParams(id, email));
+    public List<UserAdminDto> findUsers(UserAdminDto user) {
+        var list = UserAdminDto.from(userRepository.findUsersByParams(
+                user.getId(),
+                user.getEmail(),
+                user.getPhoneNumber(),
+                user.getRole()
+        ));
+        return list;
     }
 
     @Override

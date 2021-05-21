@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 @Builder
 @ApiModel
 public class UserAdminDto {
+    private Long id;
+    private Long phoneNumber;
     private String email;
     private Boolean isBlocked;
     private Boolean isDeleted;
@@ -24,6 +26,8 @@ public class UserAdminDto {
 
     public static UserAdminDto from(User user) {
         return UserAdminDto.builder()
+                .id(user.getId())
+                .phoneNumber(user.getPhoneNumber())
                 .email(user.getEmail())
                 .isBlocked(user.getIsBlocked())
                 .isDeleted(user.getIsDeleted())

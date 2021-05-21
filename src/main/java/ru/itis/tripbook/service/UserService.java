@@ -34,7 +34,7 @@ public interface UserService {
 
     User getUserById(Long id) throws UserNotFoundException;
 
-    List<UserAdminDto> findUsers(Long id, String email);
+    List<UserAdminDto> findUsers(UserAdminDto user);
 }
 
 
