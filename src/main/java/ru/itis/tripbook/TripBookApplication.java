@@ -23,7 +23,8 @@ public class TripBookApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(TripBookApplication.class, args);
+        SpringApplication.run(TripBookApplication.class, args)
+        ;
     }
 
 }

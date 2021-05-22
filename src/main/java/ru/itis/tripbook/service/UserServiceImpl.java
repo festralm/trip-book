@@ -6,10 +6,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.itis.tripbook.dto.UserAdminDto;
 import ru.itis.tripbook.dto.UserDto;
-import ru.itis.tripbook.dto.UserSignInForm;
 import ru.itis.tripbook.dto.UserSignUpForm;
 import ru.itis.tripbook.exception.*;
-import ru.itis.tripbook.model.Role;
+import ru.itis.tripbook.model.enums.Role;
 import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.repository.UserRepository;
 

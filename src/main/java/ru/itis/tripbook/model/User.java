@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.itis.tripbook.model.enums.Role;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "account")
@@ -34,5 +36,8 @@ public class User {
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
+
+//    @OneToMany(mappedBy = "owner")
+//    private List<Car> transports;
 
 }

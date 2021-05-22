@@ -1,4 +1,4 @@
-package ru.itis.tripbook.model;
+package ru.itis.tripbook.model.enums;
 
 public enum Role {
     ADMIN,

@@ -13,11 +13,16 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class EcoTransport extends Transport {
+public class EcoTransport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column
     private Boolean withDriver;
+    @Column
+    private String brand;
+
+    @Column
+    private String model;
 }

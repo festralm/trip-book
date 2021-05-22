@@ -1,6 +1,5 @@
 package ru.itis.tripbook.security.jwt;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import ru.itis.tripbook.exception.JwtAuthenticationException;
-import ru.itis.tripbook.model.Role;
+import ru.itis.tripbook.model.enums.Role;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;

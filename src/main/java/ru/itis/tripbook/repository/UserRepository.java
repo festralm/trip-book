@@ -3,7 +3,7 @@ package ru.itis.tripbook.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.itis.tripbook.model.Role;
+import ru.itis.tripbook.model.enums.Role;
 import ru.itis.tripbook.model.User;
 
 import java.util.List;
