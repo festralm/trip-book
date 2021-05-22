@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table
@@ -27,8 +28,26 @@ public class Car {
     @Column
     private Boolean withDriver;
 
+    @Column
+    private String name;
+
+    @Column
+    private Long price;
+
+    @Column
+    private Boolean forHour;
+
+    @Column
+    private Boolean isDeleted;
+
+    @Column
+    private Boolean isBlocked;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+
+    @Column
+    private String photo_url;
 }

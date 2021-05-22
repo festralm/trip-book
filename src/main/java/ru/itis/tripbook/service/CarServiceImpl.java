@@ -22,6 +22,9 @@ public class CarServiceImpl implements CarService {
                         .brand(car.getBrand())
                         .model(car.getModel())
                         .withDriver(car.getWithDriver())
+                        .price(car.getPrice())
+                        .forHour(car.getForHour())
+                        .name(car.getName())
                         .user(car.getUser())
                 .build()
         );
