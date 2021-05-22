@@ -37,7 +37,7 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-//    @OneToMany(mappedBy = "owner")
-//    private List<Car> transports;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER   )
+    private List<Car> transports;
 
 }
