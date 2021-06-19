@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.model.enums.Role;
+import ru.itis.tripbook.model.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,23 +15,26 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ApiModel
-public class UserDto {
+public class UserAdminSearchForm {
+    private Long id;
     private String email;
-    private String photoUrl;
+    private Boolean isBlocked;
+    private Boolean isDeleted;
     private Role role;
 
-    public static UserDto from(User user) {
-        return UserDto.builder()
+    public static UserAdminSearchForm from(User user) {
+        return UserAdminSearchForm.builder()
+                .id(user.getId())
                 .email(user.getEmail())
-                .photoUrl(user.getPhotoUrl())
+                .isBlocked(user.getIsBlocked())
+                .isDeleted(user.getIsDeleted())
                 .role(user.getRole())
                 .build();
     }
 
-    public static List<UserDto> from(List<User> users) {
+    public static List<UserAdminSearchForm> from(List<User> users) {
         return users.stream()
-                .map(UserDto::from)
+                .map(UserAdminSearchForm::from)
                 .collect(Collectors.toList());
     }
 }

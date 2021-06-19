@@ -39,7 +39,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.getIsBlocked() == null;
+        return !user.getIsBlocked();
     }
 
     @Override
@@ -49,6 +49,6 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.getIsDeleted() == null;
+        return !user.getIsDeleted();
     }
 }

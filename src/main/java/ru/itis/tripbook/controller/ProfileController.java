@@ -1,6 +1,5 @@
 package ru.itis.tripbook.controller;
 
-import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import ru.itis.tripbook.exception.UserIsBlockedException;
 import ru.itis.tripbook.exception.UserIsDeletedException;
 import ru.itis.tripbook.exception.UserNotFoundException;
 import ru.itis.tripbook.model.User;
-import ru.itis.tripbook.response.MyResponse;
 import ru.itis.tripbook.security.UserDetailsImpl;
 import ru.itis.tripbook.service.UserService;
 
@@ -28,15 +26,11 @@ public class ProfileController {
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         UserDto userDto = null;
         try {
-            userDto = userService.getUserByIdForUser(id);
+            userDto = userService.getUserById(id);
         } catch (UserIsBlockedException e) {
-            return ResponseEntity
-                    .status(HttpStatus.GONE)
-                    .body(MyResponse.USER_BLOCKED);
+            //todo
         } catch (UserIsDeletedException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(MyResponse.USER_DELETED);
+            //todo
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>("User is not found", HttpStatus.NO_CONTENT);
         }

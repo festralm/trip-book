@@ -23,9 +23,12 @@ public class MyResponseBody {
 }
 
 enum MyStatus {
-    WRONG_AUTH(1, "Неверный email или пароль"),
-    EMAIL_TAKEN(2, "Email уже зарегистрирован"),
-    NOT_AUTHORIZED(3, "Пользователь анонимный"),
+    NOT_AUTHORIZED(1, "Пользователь анонимный"),
+    USER_IS_BLOCKED(2, "Пользователь заблокирован"),
+    USER_IS_DELETED(3, "Пользователь удален"),
+    USER_IS_NOT_FOUND(4, "Пользователь не найде"),
+    WRONG_AUTH(5, "Неверный email или пароль"),
+    EMAIL_TAKEN(6, "Email уже зарегистрирован"),
     IS_AUTHORIZED(4, "Пользователь распознан"),
     ADMIN_IS_AUTHORIZED(5, "Админ распознан");
 

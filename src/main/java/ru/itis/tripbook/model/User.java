@@ -20,24 +20,24 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Long phoneNumber;
-
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false)
     private String hashPassword;
 
     @Column
+    private String photoUrl;
+
+    @Column(nullable = false)
     private Boolean isDeleted;
 
-    @Column
+    @Column(nullable = false)
     private Boolean isBlocked;
 
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER   )
-    private List<Car> transports;
+    private List<Car> cars;
 
 }

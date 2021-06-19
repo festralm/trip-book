@@ -18,12 +18,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "where " +
             "(:user_id is null or user.id = :user_id) and " +
             "(:user_email is null or user.email = :user_email) and " +
-            "(:phone_number is null or user.phoneNumber = :phone_number) and " +
+            "(:is_deleted is null or user.isDeleted = :is_deleted) and " +
+            "(:is_blocked is null or user.isBlocked = :is_blocked) and " +
             "(:role is null or user.role = :role) ")
     List<User> findUsersByParams(
             @Param("user_id") Long id,
             @Param("user_email") String email,
-            @Param("phone_number") Long phoneNumber,
+            @Param("is_deleted") Boolean isDeleted,
+            @Param("is_blocked") Boolean isBlocked,
             @Param("role") Role role
     );
 }

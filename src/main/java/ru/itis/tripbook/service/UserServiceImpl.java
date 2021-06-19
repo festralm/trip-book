@@ -1,10 +1,13 @@
 package ru.itis.tripbook.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.itis.tripbook.dto.UserAdminDto;
+import ru.itis.tripbook.dto.UserAdminForm;
+import ru.itis.tripbook.dto.UserAdminSearchForm;
 import ru.itis.tripbook.dto.UserDto;
 import ru.itis.tripbook.dto.UserSignUpForm;
 import ru.itis.tripbook.exception.*;
@@ -16,6 +19,8 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+    
     @Autowired
     private UserRepository userRepository;
 
@@ -24,131 +29,157 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
+        LOGGER.info("Getting user with email " + email);
         return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format("Email %s not found.", email)));
     }
 
     @Override
     public User save(UserSignUpForm user) throws EmailAlreadyTakenException {
+        LOGGER.info("Trying to save user " + user.toString());
         try {
+            LOGGER.info("Checking if email is alredy is in database");
             findByEmail(user.getEmail());
+            LOGGER.info("Email " + user.getEmail() + " is found");
             throw new EmailAlreadyTakenException(user.getEmail());
         } catch (UsernameNotFoundException exception) {
+            LOGGER.info("Email " + user.getEmail() + " is not found");
+            LOGGER.info("Creating new user");
             User newUser = User.builder()
-                    .phoneNumber(user.getPhoneNumber())
                     .email(user.getEmail())
+                    .photoUrl("default-user.png")
                     .hashPassword(passwordEncoder.encode(user.getPassword()))
+                    .isBlocked(false)
+                    .isDeleted(false)
                     .role(Role.USER)
                     .build();
             userRepository.save(newUser);
+            LOGGER.info("Saved new user " + newUser.toString());
+            LOGGER.info("Returning new user");
             return newUser;
         }
     }
 
     @Override
-    public UserAdminDto deleteUserById(Long id) throws UserIsDeletedException, UserNotFoundException {
-        var user = getUserById(id);
+    public UserAdminSearchForm deleteUserById(Long id) throws UserIsDeletedException, UserNotFoundException {
+        var user = getUserByIdAllDetails(id);
         if (user.getIsDeleted() != null) {
             throw new UserIsDeletedException(user.getEmail());
         }
         user.setIsDeleted(true);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserAdminSearchForm.from(user);
     }
 
     @Override
-    public UserAdminDto restoreUserById(Long id) throws UserIsNotDeletedException, UserNotFoundException {
-        var user = getUserById(id);
+    public UserAdminSearchForm restoreUserById(Long id) throws UserIsNotDeletedException, UserNotFoundException {
+        var user = getUserByIdAllDetails(id);
         if (user.getIsDeleted() == null) {
             throw new UserIsNotDeletedException(user.getEmail());
         }
         user.setIsDeleted(null);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserAdminSearchForm.from(user);
     }
 
     @Override
-    public UserAdminDto blockUserById(Long id) throws UserIsBlockedException, UserNotFoundException {
-        var user = getUserById(id);
+    public UserAdminSearchForm blockUserById(Long id) throws UserIsBlockedException, UserNotFoundException {
+        var user = getUserByIdAllDetails(id);
         if (user.getIsBlocked() != null) {
             throw new UserIsBlockedException(user.getEmail());
         }
         user.setIsBlocked(true);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserAdminSearchForm.from(user);
     }
 
 
     @Override
-    public UserAdminDto unblockUserById(Long id) throws UserIsNotBlockedException, UserNotFoundException {
-        var user = getUserById(id);
+    public UserAdminSearchForm unblockUserById(Long id) throws UserIsNotBlockedException, UserNotFoundException {
+        var user = getUserByIdAllDetails(id);
         if (user.getIsBlocked() == null) {
             throw new UserIsNotBlockedException(user.getEmail());
         }
         user.setIsBlocked(null);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserAdminSearchForm.from(user);
     }
 
     @Override
-    public UserAdminDto makeAdminById(Long id) throws UserIsAlreadyAdminException, UserNotFoundException {
-        var user = getUserById(id);
+    public UserAdminSearchForm makeAdminById(Long id) throws UserIsAlreadyAdminException, UserNotFoundException {
+        var user = getUserByIdAllDetails(id);
         if (user.getRole() == Role.ADMIN) {
             throw new UserIsAlreadyAdminException(user.getEmail());
         }
         user.setRole(Role.ADMIN);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserAdminSearchForm.from(user);
     }
 
     @Override
-    public UserAdminDto undoAdminById(Long id) throws UserIsNotAdminException, UserNotFoundException {
-        var user = getUserById(id);
+    public UserAdminSearchForm undoAdminById(Long id) throws UserIsNotAdminException, UserNotFoundException {
+        var user = getUserByIdAllDetails(id);
         if (user.getRole() != Role.ADMIN) {
             throw new UserIsNotAdminException(user.getEmail());
         }
         user.setRole(Role.USER);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserAdminSearchForm.from(user);
     }
 
 
     @Override
-    public UserDto getUserByIdForUser(Long id) throws UserIsBlockedException, UserIsDeletedException, UserNotFoundException {
-        var user = getUserById(id);
-        if (user.getIsBlocked() != null) {
+    public UserDto getUserById(Long id)
+            throws
+            UserIsBlockedException,
+            UserIsDeletedException,
+            UserNotFoundException
+    {
+        LOGGER.info("Getting user by id " + id);
+        var user = getUserByIdAllDetails(id);
+        LOGGER.info("Got user " + user.toString());
+        if (user.getIsBlocked()) {
+            LOGGER.info("User is blocked");
             throw new UserIsBlockedException(user.getEmail());
         }
-        if (user.getIsDeleted() != null) {
+        if (user.getIsDeleted()) {
+            LOGGER.info("User is deleted");
             throw new UserIsDeletedException(user.getEmail());
         }
+        LOGGER.info("Returning UserDto");
         return UserDto.from(user);
     }
 
     @Override
-    public User getUserById(Long id) throws UserNotFoundException {
+    public User getUserByIdAllDetails(Long id) throws UserNotFoundException {
+        LOGGER.info("Returning user by id " + id + " with all details");
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @Override
-    public List<UserAdminDto> findUsers(UserAdminDto user) {
-        var list = UserAdminDto.from(userRepository.findUsersByParams(
+    public List<UserAdminForm> findUsers(UserAdminSearchForm user) {
+        LOGGER.info("Searching users");
+
+        var list = UserAdminForm.from(userRepository.findUsersByParams(
                 user.getId(),
                 user.getEmail(),
-                user.getPhoneNumber(),
+                user.getIsDeleted(),
+                user.getIsBlocked(),
                 user.getRole()
         ));
+        LOGGER.info("Found " + list.size() + " users");
+        LOGGER.info("Users: " + list.toString());
         return list;
     }
 
     @Override
-    public List<UserAdminDto> getUsersForAdmin() {
+    public List<UserAdminSearchForm> getUsersForAdmin() {
         var users = userRepository.findAll();
-        return UserAdminDto.from(users);
+        return UserAdminSearchForm.from(users);
     }
 
     @Override
-    public UserAdminDto getUserByIdForAdmin(Long id) throws UserNotFoundException {
-        var user = getUserById(id);
-        return UserAdminDto.from(user);
+    public UserAdminSearchForm getUserByIdForAdmin(Long id) throws UserNotFoundException {
+        var user = getUserByIdAllDetails(id);
+        return UserAdminSearchForm.from(user);
     }
 }

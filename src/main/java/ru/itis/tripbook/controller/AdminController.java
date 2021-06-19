@@ -1,18 +1,14 @@
 package ru.itis.tripbook.controller;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.itis.tripbook.dto.UserAdminDto;
-import ru.itis.tripbook.dto.UserSignInForm;
+import ru.itis.tripbook.dto.UserAdminSearchForm;
 import ru.itis.tripbook.exception.*;
-import ru.itis.tripbook.security.UserDetailsImpl;
 import ru.itis.tripbook.service.UserService;
 
 import java.util.List;
@@ -21,11 +17,13 @@ import java.util.List;
 @RequestMapping("/admin")
 @PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
+
     @Autowired
     private UserService userService;
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserAdminDto>> getAllUsers() {
+    public ResponseEntity<List<UserAdminSearchForm>> getAllUsers() {
         return ResponseEntity.ok(userService.getUsersForAdmin());
     }
 
@@ -105,7 +103,10 @@ public class AdminController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<?>> findUsers(@RequestBody UserAdminDto user) {
-            return ResponseEntity.ok().body(userService.findUsers(user));
+    public ResponseEntity<List<?>> findUsers(@RequestBody UserAdminSearchForm user) {
+        LOGGER.info("Got UserAdminSearchDto " + user.toString());
+        var usersList = userService.findUsers(user);
+        LOGGER.info("Returning status 200(OK) and List of UserAdminDto");
+        return ResponseEntity.ok().body(usersList);
     }
 }

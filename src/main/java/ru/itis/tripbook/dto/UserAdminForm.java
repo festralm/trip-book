@@ -1,12 +1,11 @@
 package ru.itis.tripbook.dto;
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.itis.tripbook.model.enums.Role;
 import ru.itis.tripbook.model.User;
+import ru.itis.tripbook.model.enums.Role;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,29 +14,28 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ApiModel
-public class UserAdminDto {
+public class UserAdminForm {
     private Long id;
-    private Long phoneNumber;
     private String email;
+    private String photoUrl;
     private Boolean isBlocked;
     private Boolean isDeleted;
     private Role role;
 
-    public static UserAdminDto from(User user) {
-        return UserAdminDto.builder()
+    public static UserAdminForm from(User user) {
+        return UserAdminForm.builder()
                 .id(user.getId())
-                .phoneNumber(user.getPhoneNumber())
                 .email(user.getEmail())
+                .photoUrl(user.getPhotoUrl())
                 .isBlocked(user.getIsBlocked())
                 .isDeleted(user.getIsDeleted())
                 .role(user.getRole())
                 .build();
     }
 
-    public static List<UserAdminDto> from(List<User> users) {
+    public static List<UserAdminForm> from(List<User> users) {
         return users.stream()
-                .map(UserAdminDto::from)
+                .map(UserAdminForm::from)
                 .collect(Collectors.toList());
     }
 }
