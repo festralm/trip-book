@@ -10,9 +10,10 @@ import ru.itis.tripbook.model.User;
 import java.util.List;
 
 public interface UserService {
-    UserDto getUserById(Long id) throws UserIsBlockedException, UserIsDeletedException, UserNotFoundException;
-
-    List<UserAdminSearchForm> getUsersForAdmin();
+    UserDto getUserById(Long id)
+            throws UserIsBlockedException,
+            UserIsDeletedException,
+            UserNotFoundException;
 
     UserAdminSearchForm getUserByIdForAdmin(Long id) throws UserNotFoundException;
 
@@ -20,17 +21,29 @@ public interface UserService {
 
     User save(UserSignUpForm user) throws EmailAlreadyTakenException;
 
-    UserAdminSearchForm deleteUserById(Long id) throws UserIsDeletedException, UserNotFoundException;
+    UserAdminSearchForm deleteUserById(Long id)
+            throws UserIsDeletedException,
+            UserNotFoundException;
 
-    UserAdminSearchForm restoreUserById(Long id) throws UserIsNotDeletedException, UserNotFoundException;
+    UserAdminSearchForm restoreUserById(Long id)
+            throws UserIsNotDeletedException,
+            UserNotFoundException;
 
-    UserAdminSearchForm blockUserById(Long id) throws UserIsBlockedException, UserNotFoundException;
+    UserAdminSearchForm blockUserById(Long id)
+            throws UserIsBlockedException,
+            UserNotFoundException;
 
-    UserAdminSearchForm unblockUserById(Long id) throws UserIsNotBlockedException, UserNotFoundException;
+    UserAdminSearchForm unblockUserById(Long id)
+            throws UserIsNotBlockedException,
+            UserNotFoundException;
 
-    UserAdminSearchForm makeAdminById(Long id) throws UserIsAlreadyAdminException, UserNotFoundException;
+    UserAdminSearchForm makeAdminById(Long id)
+            throws UserIsAlreadyAdminException,
+            UserNotFoundException;
 
-    UserAdminSearchForm undoAdminById(Long id) throws UserIsNotAdminException, UserNotFoundException;
+    UserAdminSearchForm undoAdminById(Long id)
+            throws UserIsNotAdminException,
+            UserNotFoundException;
 
     User getUserByIdAllDetails(Long id) throws UserNotFoundException;
 

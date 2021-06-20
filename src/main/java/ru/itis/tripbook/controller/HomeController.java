@@ -27,12 +27,12 @@ public class HomeController {
 
     @PermitAll
     @GetMapping
-    public ResponseEntity<?> getProfilePage(@AuthenticationPrincipal UserDetailsImpl user) {
+    public ResponseEntity<?> getDefault(@AuthenticationPrincipal UserDetailsImpl user) {
         if (user != null) {
             LOGGER.info("User is found");
             try {
                 var userReturn = userService.getUserById(user.getUser().getId());
-                LOGGER.info("Returning status 200(OK) and " + userReturn);
+                LOGGER.info("Returning status 200(OK) and {}", userReturn);
                 return ResponseEntity.ok(
                         new MyResponseBody(MyStatus.IS_AUTHORIZED, userReturn)
 
@@ -40,23 +40,23 @@ public class HomeController {
             } catch (UserIsBlockedException e) {
                 LOGGER.info("User is blocked");
                 var myBody = new MyResponseBody(MyStatus.USER_IS_BLOCKED);
-                LOGGER.info("Returning " + myBody);
+                LOGGER.info("Returning {}", myBody);
                 return ResponseEntity.ok().body(myBody);
             } catch (UserIsDeletedException e) {
                 LOGGER.info("User is deleted");
                 var myBody = new MyResponseBody(MyStatus.USER_IS_DELETED);
-                LOGGER.info("Returning " + myBody);
+                LOGGER.info("Returning {}", myBody);
                 return ResponseEntity.ok().body(myBody);
             } catch (UserNotFoundException e) {
                 LOGGER.info("User is not found");
                 var myBody = new MyResponseBody(MyStatus.USER_IS_NOT_FOUND);
-                LOGGER.info("Returning " + myBody);
+                LOGGER.info("Returning {}", myBody);
                 return ResponseEntity.ok().body(myBody);
             }
         } else {
             LOGGER.info("User is anonymous");
             var myBody = new MyResponseBody(MyStatus.NOT_AUTHORIZED);
-            LOGGER.info("Returning " + myBody);
+            LOGGER.info("Returning {}", myBody);
             return ResponseEntity.ok().body(myBody);
         }
     }

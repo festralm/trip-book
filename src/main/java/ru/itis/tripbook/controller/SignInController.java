@@ -39,7 +39,7 @@ public class SignInController {
 
     @PostMapping
     public ResponseEntity<?> authenticate(@RequestBody UserSignInForm user) {
-        LOGGER.info("User form " + user.toString());
+        LOGGER.info("User form {}", user.toString());
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     user.getEmail(),
@@ -47,9 +47,9 @@ public class SignInController {
             );
             var newUser = userService.findByEmail(user.getEmail());
             var userDto = UserDto.from(newUser);
-            LOGGER.info("Found user " + userDto);
+            LOGGER.info("Found user {}", userDto);
             var token = jwtTokenProvider.create(newUser.getEmail(), newUser.getRole());
-            LOGGER.info("Got token " + token);
+            LOGGER.info("Got token {}", token);
             LOGGER.info("Returning status 200(OK), token and UserDto");
             return ResponseEntity.ok()
                     .header(
@@ -62,7 +62,7 @@ public class SignInController {
         } catch (AuthenticationException exception) {
             LOGGER.error("AuthenticationException");
             var myBody = new MyResponseBody(MyStatus.WRONG_AUTH);
-            LOGGER.info("Returning " + myBody);
+            LOGGER.info("Returning {}", myBody);
             return ResponseEntity.ok().body(myBody);
         }
     }

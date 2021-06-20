@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import ru.itis.tripbook.exception.JwtAuthenticationException;
-import ru.itis.tripbook.model.enums.Role;
+import ru.itis.tripbook.model.Role;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;

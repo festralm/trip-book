@@ -11,7 +11,7 @@ import ru.itis.tripbook.dto.UserAdminSearchForm;
 import ru.itis.tripbook.dto.UserDto;
 import ru.itis.tripbook.dto.UserSignUpForm;
 import ru.itis.tripbook.exception.*;
-import ru.itis.tripbook.model.enums.Role;
+import ru.itis.tripbook.model.Role;
 import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.repository.UserRepository;
 
@@ -29,20 +29,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        LOGGER.info("Getting user with email " + email);
+        LOGGER.info("Getting user with email {}", email);
         return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format("Email %s not found.", email)));
     }
 
     @Override
     public User save(UserSignUpForm user) throws EmailAlreadyTakenException {
-        LOGGER.info("Trying to save user " + user.toString());
+        LOGGER.info("Trying to save user {}", user.toString());
         try {
-            LOGGER.info("Checking if email is alredy is in database");
+            LOGGER.info("Checking if email is already is in database");
             findByEmail(user.getEmail());
-            LOGGER.info("Email " + user.getEmail() + " is found");
+            LOGGER.info("Email {} is found", user.getEmail());
             throw new EmailAlreadyTakenException(user.getEmail());
         } catch (UsernameNotFoundException exception) {
-            LOGGER.info("Email " + user.getEmail() + " is not found");
+            LOGGER.info("Email {} is not found", user.getEmail());
             LOGGER.info("Creating new user");
             User newUser = User.builder()
                     .email(user.getEmail())
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
                     .role(Role.USER)
                     .build();
             userRepository.save(newUser);
-            LOGGER.info("Saved new user " + newUser.toString());
+            LOGGER.info("Saved new user {}", newUser.toString());
             LOGGER.info("Returning new user");
             return newUser;
         }
@@ -136,7 +136,8 @@ public class UserServiceImpl implements UserService {
     {
         LOGGER.info("Getting user by id " + id);
         var user = getUserByIdAllDetails(id);
-        LOGGER.info("Got user " + user.toString());
+        var userDto = UserDto.from(user);
+        LOGGER.info("Got user " + userDto.toString());
         if (user.getIsBlocked()) {
             LOGGER.info("User is blocked");
             throw new UserIsBlockedException(user.getEmail());
@@ -146,7 +147,7 @@ public class UserServiceImpl implements UserService {
             throw new UserIsDeletedException(user.getEmail());
         }
         LOGGER.info("Returning UserDto");
-        return UserDto.from(user);
+        return userDto;
     }
 
     @Override
@@ -169,12 +170,6 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Found " + list.size() + " users");
         LOGGER.info("Users: " + list.toString());
         return list;
-    }
-
-    @Override
-    public List<UserAdminSearchForm> getUsersForAdmin() {
-        var users = userRepository.findAll();
-        return UserAdminSearchForm.from(users);
     }
 
     @Override

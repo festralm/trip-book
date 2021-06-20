@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
@@ -20,13 +21,15 @@ public class Car {
     private Long id;
 
     @Column
-    private String brand;
-
-    @Column
-    private String model;
-
-    @Column
     private Boolean withDriver;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private CarBrand brand;
+
+    @ManyToOne
+    @JoinColumn(name = "model_id")
+    private CarModel model;
 
     @Column
     private String name;
@@ -38,6 +41,22 @@ public class Car {
     private Boolean forHour;
 
     @Column
+    private String description;
+
+    @Column
+    private Timestamp start;
+
+    @Column
+    private Timestamp finish;
+
+    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, fetch = FetchType.LAZY,
+            orphanRemoval = true)
+    private List<CarPhotoUrl> carPhotoUrls;
+
+    @Column
+    private Double rating;
+
+    @Column
     private Boolean isDeleted;
 
     @Column
@@ -46,8 +65,4 @@ public class Car {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-
-    @Column
-    private String photo_url;
 }

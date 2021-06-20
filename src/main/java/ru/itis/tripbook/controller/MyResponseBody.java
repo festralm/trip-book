@@ -29,8 +29,9 @@ enum MyStatus {
     USER_IS_NOT_FOUND(4, "Пользователь не найде"),
     WRONG_AUTH(5, "Неверный email или пароль"),
     EMAIL_TAKEN(6, "Email уже зарегистрирован"),
-    IS_AUTHORIZED(4, "Пользователь распознан"),
-    ADMIN_IS_AUTHORIZED(5, "Админ распознан");
+    IS_AUTHORIZED(7, "Пользователь распознан"),
+    BRAND_IS_NOT_FOUND(8, "Марка не найдена"),
+    MODEL_IS_NOT_FOUND(9, "Модель не найдена");
 
     private final int statusNumber;
     private final String message;

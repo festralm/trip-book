@@ -47,10 +47,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .and()
                 .apply(jwtConfigurer)
-        .and()
-        .logout()
-        .logoutSuccessUrl("/")
-        .logoutUrl("/logout")
+                .and()
+                .logout()
+                .logoutSuccessUrl("/")
+                .logoutUrl("/logout")
         ;
     }
 

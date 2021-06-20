@@ -22,10 +22,6 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/users")
-    public ResponseEntity<List<UserAdminSearchForm>> getAllUsers() {
-        return ResponseEntity.ok(userService.getUsersForAdmin());
-    }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
@@ -104,7 +100,7 @@ public class AdminController {
 
     @PostMapping("/search")
     public ResponseEntity<List<?>> findUsers(@RequestBody UserAdminSearchForm user) {
-        LOGGER.info("Got UserAdminSearchDto " + user.toString());
+        LOGGER.info("Got UserAdminSearchDto {}", user.toString());
         var usersList = userService.findUsers(user);
         LOGGER.info("Returning status 200(OK) and List of UserAdminDto");
         return ResponseEntity.ok().body(usersList);

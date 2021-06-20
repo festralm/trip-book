@@ -14,26 +14,22 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserAdminSearchForm {
+public class UserForCarDto {
     private Long id;
     private String email;
-    private Boolean isBlocked;
-    private Boolean isDeleted;
-    private Role role;
+    private String photoUrl;
 
-    public static UserAdminSearchForm from(User user) {
-        return UserAdminSearchForm.builder()
+    public static UserForCarDto from(User user) {
+        return UserForCarDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
-                .isBlocked(user.getIsBlocked())
-                .isDeleted(user.getIsDeleted())
-                .role(user.getRole())
+                .photoUrl(user.getPhotoUrl())
                 .build();
     }
 
-    public static List<UserAdminSearchForm> from(List<User> users) {
+    public static List<UserForCarDto> from(List<User> users) {
         return users.stream()
-                .map(UserAdminSearchForm::from)
+                .map(UserForCarDto::from)
                 .collect(Collectors.toList());
     }
 }
