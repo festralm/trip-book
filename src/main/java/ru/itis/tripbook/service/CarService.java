@@ -3,11 +3,8 @@ package ru.itis.tripbook.service;
 import org.springframework.stereotype.Service;
 import ru.itis.tripbook.dto.CarDto;
 import ru.itis.tripbook.dto.CarForm;
-import ru.itis.tripbook.exception.CarBrandNotFoundException;
-import ru.itis.tripbook.exception.CarModelNotFoundException;
-import ru.itis.tripbook.exception.UserNotFoundException;
+import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.Car;
-import ru.itis.tripbook.model.User;
 
 import java.util.List;
 
@@ -15,4 +12,10 @@ import java.util.List;
 public interface CarService {
 
     CarDto saveCar(CarForm car) throws CarBrandNotFoundException, CarModelNotFoundException;
+
+    List<CarDto> getBestCars(Long count);
+
+    CarDto getCarById(Long id) throws TransportNotFoundException, TransportIsBlockedException, TransportIsDeletedException;
+
+    Car getCarByIdAllDetails(Long id) throws TransportNotFoundException;
 }

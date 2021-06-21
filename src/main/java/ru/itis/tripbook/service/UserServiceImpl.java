@@ -175,6 +175,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserAdminSearchForm getUserByIdForAdmin(Long id) throws UserNotFoundException {
         var user = getUserByIdAllDetails(id);
+        LOGGER.info("Returning User with all details");
         return UserAdminSearchForm.from(user);
     }
 }

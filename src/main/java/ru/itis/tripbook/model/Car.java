@@ -40,7 +40,7 @@ public class Car {
     @Column
     private Boolean forHour;
 
-    @Column
+    @Column(length = 1000)
     private String description;
 
     @Column

@@ -26,12 +26,15 @@ enum MyStatus {
     NOT_AUTHORIZED(1, "Пользователь анонимный"),
     USER_IS_BLOCKED(2, "Пользователь заблокирован"),
     USER_IS_DELETED(3, "Пользователь удален"),
-    USER_IS_NOT_FOUND(4, "Пользователь не найде"),
+    USER_IS_NOT_FOUND(4, "Пользователь не найден"),
     WRONG_AUTH(5, "Неверный email или пароль"),
     EMAIL_TAKEN(6, "Email уже зарегистрирован"),
     IS_AUTHORIZED(7, "Пользователь распознан"),
     BRAND_IS_NOT_FOUND(8, "Марка не найдена"),
-    MODEL_IS_NOT_FOUND(9, "Модель не найдена");
+    MODEL_IS_NOT_FOUND(9, "Модель не найдена"),
+    TRANSPORT_IS_BLOCKED(10, "Транспорт заблокирован"),
+    TRANSPORT_IS_DELETED(11, "Транспорт удален"),
+    TRANSPORT_IS_NOT_FOUND(12, "Транспорт не найден");
 
     private final int statusNumber;
     private final String message;

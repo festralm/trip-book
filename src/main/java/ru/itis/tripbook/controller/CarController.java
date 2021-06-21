@@ -8,15 +8,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.itis.tripbook.dto.CarDto;
 import ru.itis.tripbook.dto.CarForm;
-import ru.itis.tripbook.exception.CarBrandNotFoundException;
-import ru.itis.tripbook.exception.CarModelNotFoundException;
-import ru.itis.tripbook.model.CarPhotoUrl;
+import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.security.UserDetailsImpl;
 import ru.itis.tripbook.service.CarBrandService;
 import ru.itis.tripbook.service.CarModelService;
 import ru.itis.tripbook.service.CarService;
-
-import java.util.Collections;
 
 @RestController
 @RequestMapping("/car")
@@ -72,5 +68,39 @@ public class CarController {
         var brands = carModelService.getModelsByBrandId(id);
         LOGGER.info("Returning status 200(OK) and models List of CarModelDto: {}", brands.toString());
         return ResponseEntity.ok().body(brands);
+    }
+
+    @GetMapping("/best/{count}")
+    public ResponseEntity<?> getBestCarsOfCount(@PathVariable Long count) {
+        LOGGER.info("Getting {} best cars}", count);
+        var cars = carService.getBestCars(count);
+        LOGGER.info("Returning status 200(OK) and List of {} CarDto", cars.size());
+        return ResponseEntity.ok().body(cars);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCarById(@PathVariable Long id) {
+        LOGGER.info("Getting car with id {}", id);
+        CarDto car = null;
+        try {
+            car = carService.getCarById(id);
+        } catch (TransportNotFoundException e) {
+            LOGGER.info("Car is not found");
+            var myBody = new MyResponseBody(MyStatus.TRANSPORT_IS_NOT_FOUND);
+            LOGGER.info("Returning {}", myBody);
+            return ResponseEntity.ok().body(myBody);
+        } catch (TransportIsBlockedException e) {
+            LOGGER.info("Car is blocked");
+            var myBody = new MyResponseBody(MyStatus.TRANSPORT_IS_BLOCKED);
+            LOGGER.info("Returning {}", myBody);
+            return ResponseEntity.ok().body(myBody);
+        } catch (TransportIsDeletedException e) {
+            LOGGER.info("Car is deleted");
+            var myBody = new MyResponseBody(MyStatus.TRANSPORT_IS_DELETED);
+            LOGGER.info("Returning {}", myBody);
+            return ResponseEntity.ok().body(myBody);
+        }
+        LOGGER.info("Returning status 200(OK) and CarDto");
+        return ResponseEntity.ok().body(car);
     }
 }

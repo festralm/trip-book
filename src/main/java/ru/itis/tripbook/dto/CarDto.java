@@ -9,6 +9,7 @@ import ru.itis.tripbook.model.*;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Data
@@ -28,6 +29,7 @@ public class CarDto {
     private Timestamp finish;
     private List<String> carPhotoUrls;
     private UserForCarDto user;
+    private String rating;
 
 
     public static CarDto from(Car car) {
@@ -50,6 +52,7 @@ public class CarDto {
                                 .collect(Collectors.toList())
                 )
                 .user(UserForCarDto.from(car.getUser()))
+                .rating(String.format(Locale.US, "%.2f", car.getRating()))
                 .build();
     }
 
