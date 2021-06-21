@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.itis.tripbook.exception.JwtAuthenticationException;
 import ru.itis.tripbook.exception.UserIsBlockedException;
 import ru.itis.tripbook.exception.UserIsDeletedException;
 import ru.itis.tripbook.exception.UserNotFoundException;
@@ -60,4 +61,5 @@ public class HomeController {
             return ResponseEntity.ok().body(myBody);
         }
     }
+
 }

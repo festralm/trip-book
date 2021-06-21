@@ -25,6 +25,6 @@ public class CarModel {
     @JoinColumn(name = "brand_id")
     private CarBrand brand;
 
-    @OneToMany(mappedBy = "brand", fetch = FetchType.EAGER   )
+    @OneToMany(mappedBy = "brand"  )
     private List<Car> cars;
 }

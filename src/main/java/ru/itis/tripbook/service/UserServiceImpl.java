@@ -25,6 +25,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private CarService carService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -137,7 +140,7 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Getting user by id " + id);
         var user = getUserByIdAllDetails(id);
         var userDto = UserDto.from(user);
-        LOGGER.info("Got user " + userDto.toString());
+        LOGGER.info("Got user {}", userDto.toString());
         if (user.getIsBlocked()) {
             LOGGER.info("User is blocked");
             throw new UserIsBlockedException(user.getEmail());
@@ -153,7 +156,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByIdAllDetails(Long id) throws UserNotFoundException {
         LOGGER.info("Returning user by id " + id + " with all details");
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        var user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        LOGGER.info("Got user with {} cars", user.getCars().size());
+        return user;
     }
 
     @Override
@@ -170,6 +175,36 @@ public class UserServiceImpl implements UserService {
         LOGGER.info("Found " + list.size() + " users");
         LOGGER.info("Users: " + list.toString());
         return list;
+    }
+
+    @Override
+    public UserDto addToWishlist(Long carId, Long userId) throws UserNotFoundException, TransportNotFoundException {
+        var user = getUserByIdAllDetails(userId);
+        LOGGER.info("Got user with id {}", userId);
+        var car = carService.getCarByIdAllDetails(carId);
+        LOGGER.info("Got car with id {}", carId);
+        user.getWishedCars().add(car);
+        LOGGER.info("Added car to user's list");
+        userRepository.save(user);
+        LOGGER.info("Saved user");
+        return UserDto.from(user);
+    }
+
+    @Override
+    public UserDto deleteFromWishlist(Long carId, Long userId) throws UserNotFoundException, TransportNotFoundException {
+        var user = getUserByIdAllDetails(userId);
+        LOGGER.info("Got user with id {}", userId);
+        var car = carService.getCarByIdAllDetails(carId);
+        LOGGER.info("Got car with id {}", carId);
+        LOGGER.info("Users wished cars contains car: {}", user.getWishedCars().contains(car));
+        if (user.getWishedCars().remove(car)) {
+            LOGGER.info("Removed car from user's list");
+        } else {
+            LOGGER.info("Could not remove car from user's list");
+        }
+        userRepository.save(user);
+        LOGGER.info("Saved user");
+        return UserDto.from(user);
     }
 
     @Override

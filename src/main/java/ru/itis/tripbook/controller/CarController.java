@@ -8,11 +8,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.itis.tripbook.dto.CarDto;
 import ru.itis.tripbook.dto.CarForm;
+import ru.itis.tripbook.dto.UserDto;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.security.UserDetailsImpl;
-import ru.itis.tripbook.service.CarBrandService;
-import ru.itis.tripbook.service.CarModelService;
-import ru.itis.tripbook.service.CarService;
+import ru.itis.tripbook.service.*;
 
 @RestController
 @RequestMapping("/car")
@@ -28,6 +27,9 @@ public class CarController {
 
     @Autowired
     private CarModelService carModelService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/create")
     public ResponseEntity<?> authenticate(@RequestBody CarForm car,
@@ -52,8 +54,8 @@ public class CarController {
         }
         LOGGER.info("Returning saved carDto {}", carDto);
         return ResponseEntity.ok().body(carDto);
-
     }
+
     @GetMapping("/brands")
     public ResponseEntity<?> getCarBrands() {
         LOGGER.info("Getting car brands");
@@ -102,5 +104,49 @@ public class CarController {
         }
         LOGGER.info("Returning status 200(OK) and CarDto");
         return ResponseEntity.ok().body(car);
+    }
+
+
+    @PostMapping("/wishlist/{id}")
+    public ResponseEntity<?> addToWishList(@PathVariable Long id,
+                                           @AuthenticationPrincipal UserDetailsImpl user) {
+        LOGGER.info("Adding car with id {} to wishlist", id);
+        UserDto userDto = null;
+        try {
+            userDto = userService.addToWishlist(id, user.getUser().getId());
+        } catch (UserNotFoundException e) {
+            LOGGER.info("User is not found");
+            var myBody = new MyResponseBody(MyStatus.USER_IS_NOT_FOUND);
+            LOGGER.info("Returning {}", myBody);
+            return ResponseEntity.ok().body(myBody);
+        } catch (TransportNotFoundException e) {
+            LOGGER.info("Car is not found");
+            var myBody = new MyResponseBody(MyStatus.TRANSPORT_IS_NOT_FOUND);
+            LOGGER.info("Returning {}", myBody);
+            return ResponseEntity.ok().body(myBody);
+        }
+        LOGGER.info("Returning status 200(OK) and userDto {}", userDto.toString());
+        return ResponseEntity.ok().body(userDto);
+    }
+    @PostMapping("/delete-wishlist/{id}")
+    public ResponseEntity<?> deleteFromWishList(@PathVariable Long id,
+                                           @AuthenticationPrincipal UserDetailsImpl user) {
+        LOGGER.info("Removing car with id {} from wishlist", id);
+        UserDto userDto = null;
+        try {
+            userDto = userService.deleteFromWishlist(id, user.getUser().getId());
+        } catch (UserNotFoundException e) {
+            LOGGER.info("User is not found");
+            var myBody = new MyResponseBody(MyStatus.USER_IS_NOT_FOUND);
+            LOGGER.info("Returning {}", myBody);
+            return ResponseEntity.ok().body(myBody);
+        } catch (TransportNotFoundException e) {
+            LOGGER.info("Car is not found");
+            var myBody = new MyResponseBody(MyStatus.TRANSPORT_IS_NOT_FOUND);
+            LOGGER.info("Returning {}", myBody);
+            return ResponseEntity.ok().body(myBody);
+        }
+        LOGGER.info("Returning status 200(OK) and userDto {}", userDto.toString());
+        return ResponseEntity.ok().body(userDto);
     }
 }

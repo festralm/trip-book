@@ -20,6 +20,8 @@ public class UserDto {
     private String email;
     private String photoUrl;
     private Role role;
+    private List<CarForUserDto> cars;
+    private List<CarForUserDto> wishlist;
 
     public static UserDto from(User user) {
         return UserDto.builder()
@@ -27,6 +29,8 @@ public class UserDto {
                 .email(user.getEmail())
                 .photoUrl(user.getPhotoUrl())
                 .role(user.getRole())
+                .cars(CarForUserDto.from(user.getCars()))
+                .wishlist(CarForUserDto.from(user.getWishedCars()))
                 .build();
     }
 

@@ -1,9 +1,6 @@
 package ru.itis.tripbook.service;
 
-import ru.itis.tripbook.dto.UserAdminForm;
-import ru.itis.tripbook.dto.UserAdminSearchForm;
-import ru.itis.tripbook.dto.UserDto;
-import ru.itis.tripbook.dto.UserSignUpForm;
+import ru.itis.tripbook.dto.*;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.User;
 
@@ -48,6 +45,10 @@ public interface UserService {
     User getUserByIdAllDetails(Long id) throws UserNotFoundException;
 
     List<UserAdminForm> findUsers(UserAdminSearchForm user);
+
+    UserDto addToWishlist(Long carId, Long userId) throws UserNotFoundException, TransportNotFoundException;
+
+    UserDto deleteFromWishlist(Long carId, Long userId) throws UserNotFoundException, TransportNotFoundException;
 }
 
 

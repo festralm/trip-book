@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -65,4 +66,5 @@ public class Car {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
 }

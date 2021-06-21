@@ -36,7 +36,10 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER   )
+    @OneToMany(mappedBy = "user" )
     private List<Car> cars;
+
+    @ManyToMany
+    private List<Car> wishedCars;
 
 }

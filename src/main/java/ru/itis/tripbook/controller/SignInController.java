@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.itis.tripbook.dto.UserDto;
 import ru.itis.tripbook.dto.UserSignInForm;
+import ru.itis.tripbook.exception.JwtAuthenticationException;
 import ru.itis.tripbook.security.UserDetailsImpl;
 import ru.itis.tripbook.security.jwt.JwtTokenProvider;
 import ru.itis.tripbook.service.UserService;
