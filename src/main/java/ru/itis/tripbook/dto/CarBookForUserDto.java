@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.itis.tripbook.model.Book;
 import ru.itis.tripbook.model.Car;
 import ru.itis.tripbook.model.CarPhotoUrl;
 
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CarForUserDto {
+public class CarBookForUserDto {
     private Long id;
     private Boolean withDriver;
     private String brand;
@@ -32,8 +33,9 @@ public class CarForUserDto {
     private String rating;
 
 
-    public static CarForUserDto from(Car car) {
-        return CarForUserDto.builder()
+    public static CarBookForUserDto from(Book book) {
+        var car = book.getCar();
+        return CarBookForUserDto.builder()
                 .id(car.getId())
                 .withDriver(car.getWithDriver())
                 .brand(car.getBrand().getName())
@@ -42,8 +44,8 @@ public class CarForUserDto {
                 .price(car.getPrice())
                 .forHour(car.getForHour())
                 .description(car.getDescription())
-                .start(car.getStart())
-                .finish(car.getFinish())
+                .start(book.getStart())
+                .finish(book.getFinish())
                 .carPhotoUrls(
                         car
                                 .getCarPhotoUrls()
@@ -55,9 +57,9 @@ public class CarForUserDto {
                 .build();
     }
 
-    public static List<CarForUserDto> from(List<Car> cars) {
-        return cars == null ? new ArrayList<>() : cars.stream()
-                .map(CarForUserDto::from)
+    public static List<CarBookForUserDto> from(List<Book> books) {
+        return books == null ? new ArrayList<>() : books.stream()
+                .map(CarBookForUserDto::from)
                 .collect(Collectors.toList());
     }
 }

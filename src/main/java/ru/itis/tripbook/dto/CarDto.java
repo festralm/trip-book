@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.itis.tripbook.model.*;
 
-import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -30,6 +30,7 @@ public class CarDto {
     private List<String> carPhotoUrls;
     private UserForCarDto user;
     private String rating;
+    private List<BookDto> books;
 
 
     public static CarDto from(Car car) {
@@ -45,6 +46,7 @@ public class CarDto {
                 .start(car.getStart())
                 .finish(car.getFinish())
                 .carPhotoUrls(
+
                         car
                                 .getCarPhotoUrls()
                                 .stream()
@@ -53,11 +55,12 @@ public class CarDto {
                 )
                 .user(UserForCarDto.from(car.getUser()))
                 .rating(String.format(Locale.US, "%.2f", car.getRating()))
+                .books(BookDto.from(car.getBooks()))
                 .build();
     }
 
     public static List<CarDto> from(List<Car> cars) {
-        return cars.stream()
+        return cars == null ? new ArrayList<>() : cars.stream()
                 .map(CarDto::from)
                 .collect(Collectors.toList());
     }

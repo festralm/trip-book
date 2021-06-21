@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.itis.tripbook.dto.UserAdminDto;
 import ru.itis.tripbook.dto.UserAdminForm;
-import ru.itis.tripbook.dto.UserAdminSearchForm;
 import ru.itis.tripbook.dto.UserDto;
 import ru.itis.tripbook.dto.UserSignUpForm;
 import ru.itis.tripbook.exception.*;
@@ -15,6 +15,8 @@ import ru.itis.tripbook.model.Role;
 import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.repository.UserRepository;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,6 +56,7 @@ public class UserServiceImpl implements UserService {
                     .isBlocked(false)
                     .isDeleted(false)
                     .role(Role.USER)
+                    .joined(new Timestamp(System.currentTimeMillis()))
                     .build();
             userRepository.save(newUser);
             LOGGER.info("Saved new user {}", newUser.toString());
@@ -63,70 +66,105 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserAdminSearchForm deleteUserById(Long id) throws UserIsDeletedException, UserNotFoundException {
+    public UserAdminDto deleteUserById(Long id) throws UserIsDeletedException, UserNotFoundException {
         var user = getUserByIdAllDetails(id);
-        if (user.getIsDeleted() != null) {
+        if (user.getIsDeleted()) {
+            LOGGER.error("User is already deleted");
             throw new UserIsDeletedException(user.getEmail());
         }
         user.setIsDeleted(true);
+        LOGGER.info("Set isDeleted to user");
         userRepository.save(user);
-        return UserAdminSearchForm.from(user);
+        LOGGER.info("Saved user");
+        UserAdminDto userAdminDto = UserAdminDto.from(user);
+        LOGGER.info("Returning userAdminDto");
+        return userAdminDto;
     }
 
     @Override
-    public UserAdminSearchForm restoreUserById(Long id) throws UserIsNotDeletedException, UserNotFoundException {
+    public UserAdminDto restoreUserById(Long id) throws UserIsNotDeletedException, UserNotFoundException {
         var user = getUserByIdAllDetails(id);
-        if (user.getIsDeleted() == null) {
+        LOGGER.info("Got user with id {}", id);
+        if (!user.getIsDeleted()) {
+            LOGGER.error("User is already not deleted");
             throw new UserIsNotDeletedException(user.getEmail());
         }
-        user.setIsDeleted(null);
+        user.setIsDeleted(false);
+        LOGGER.info("Set isDeleted to user ");
         userRepository.save(user);
-        return UserAdminSearchForm.from(user);
+        LOGGER.info("Saved user");
+        UserAdminDto userAdminDto = UserAdminDto.from(user);
+        LOGGER.info("Returning userAdminDto");
+        return userAdminDto;
     }
 
     @Override
-    public UserAdminSearchForm blockUserById(Long id) throws UserIsBlockedException, UserNotFoundException {
+    public UserAdminDto blockUserById(Long id) throws UserIsBlockedException, UserNotFoundException {
         var user = getUserByIdAllDetails(id);
-        if (user.getIsBlocked() != null) {
+        LOGGER.info("Got user with id {}", id);
+        if (user.getIsBlocked()) {
+            LOGGER.error("User is already blocked");
             throw new UserIsBlockedException(user.getEmail());
         }
         user.setIsBlocked(true);
+        LOGGER.info("Set isBlocked to user");
         userRepository.save(user);
-        return UserAdminSearchForm.from(user);
+        LOGGER.info("Saved user");
+        UserAdminDto userAdminDto = UserAdminDto.from(user);
+        LOGGER.info("Returning userAdminDto");
+        return userAdminDto;
     }
 
 
     @Override
-    public UserAdminSearchForm unblockUserById(Long id) throws UserIsNotBlockedException, UserNotFoundException {
+    public UserAdminDto unblockUserById(Long id) throws UserIsNotBlockedException, UserNotFoundException {
         var user = getUserByIdAllDetails(id);
-        if (user.getIsBlocked() == null) {
+        LOGGER.info("Got user with id {}", id);
+        if (!user.getIsBlocked()) {
+            LOGGER.error("User is already not blocked");
             throw new UserIsNotBlockedException(user.getEmail());
         }
-        user.setIsBlocked(null);
+        user.setIsBlocked(false);
+        LOGGER.info("Set isBlocked to user");
         userRepository.save(user);
-        return UserAdminSearchForm.from(user);
+        LOGGER.info("Saved user");
+        UserAdminDto userAdminDto = UserAdminDto.from(user);
+        LOGGER.info("Returning userAdminDto");
+        return userAdminDto;
     }
 
     @Override
-    public UserAdminSearchForm makeAdminById(Long id) throws UserIsAlreadyAdminException, UserNotFoundException {
+    public UserAdminDto makeAdminById(Long id) throws UserIsAlreadyAdminException, UserNotFoundException {
         var user = getUserByIdAllDetails(id);
+        LOGGER.info("Got user with id {}", id);
         if (user.getRole() == Role.ADMIN) {
+            LOGGER.error("User is already admin");
             throw new UserIsAlreadyAdminException(user.getEmail());
         }
         user.setRole(Role.ADMIN);
+        LOGGER.info("Set role to user");
         userRepository.save(user);
-        return UserAdminSearchForm.from(user);
+        LOGGER.info("Saved user");
+        UserAdminDto userAdminDto = UserAdminDto.from(user);
+        LOGGER.info("Returning userAdminDto");
+        return userAdminDto;
     }
 
     @Override
-    public UserAdminSearchForm undoAdminById(Long id) throws UserIsNotAdminException, UserNotFoundException {
+    public UserAdminDto undoAdminById(Long id) throws UserIsNotAdminException, UserNotFoundException {
         var user = getUserByIdAllDetails(id);
+        LOGGER.info("Got user with id {}", id);
         if (user.getRole() != Role.ADMIN) {
+            LOGGER.error("User is already not admin");
             throw new UserIsNotAdminException(user.getEmail());
         }
         user.setRole(Role.USER);
+        LOGGER.info("Set role to user");
         userRepository.save(user);
-        return UserAdminSearchForm.from(user);
+        LOGGER.info("Saved user");
+        UserAdminDto userAdminDto = UserAdminDto.from(user);
+        LOGGER.info("Returning userAdminDto");
+        return userAdminDto;
     }
 
 
@@ -162,10 +200,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserAdminForm> findUsers(UserAdminSearchForm user) {
+    public List<UserAdminDto> findUsers(UserAdminForm user) {
         LOGGER.info("Searching users");
 
-        var list = UserAdminForm.from(userRepository.findUsersByParams(
+        var list = UserAdminDto.from(userRepository.findUsersByParams(
                 user.getId(),
                 user.getEmail(),
                 user.getIsDeleted(),
@@ -208,9 +246,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserAdminSearchForm getUserByIdForAdmin(Long id) throws UserNotFoundException {
+    public UserAdminDto getUserByIdForAdmin(Long id) throws UserNotFoundException {
         var user = getUserByIdAllDetails(id);
         LOGGER.info("Returning User with all details");
-        return UserAdminSearchForm.from(user);
+        return UserAdminDto.from(user);
     }
 }

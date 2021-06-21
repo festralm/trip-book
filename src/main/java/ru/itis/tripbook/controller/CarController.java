@@ -4,14 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import ru.itis.tripbook.dto.CarDto;
-import ru.itis.tripbook.dto.CarForm;
-import ru.itis.tripbook.dto.UserDto;
+import ru.itis.tripbook.dto.*;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.security.UserDetailsImpl;
 import ru.itis.tripbook.service.*;
+
+import javax.annotation.security.PermitAll;
 
 @RestController
 @RequestMapping("/car")
@@ -31,16 +32,20 @@ public class CarController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private BookService bookService;
+
     @PostMapping("/create")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> authenticate(@RequestBody CarForm car,
                                           @AuthenticationPrincipal UserDetailsImpl user) {
         LOGGER.info("Got CarForm {}", car);
         car.setUser(user.getUser());
         LOGGER.info("Set user to car");
-        CarDto carDto = null;
+        CarDto bookDto = null;
 
         try {
-            carDto = carService.saveCar(car);
+            bookDto = carService.saveCar(car);
         } catch (CarBrandNotFoundException e) {
             LOGGER.error("Brand is not found");
             var myBody = new MyResponseBody(MyStatus.BRAND_IS_NOT_FOUND);
@@ -52,11 +57,12 @@ public class CarController {
             LOGGER.info("Returning {}", myBody);
             return ResponseEntity.ok().body(myBody);
         }
-        LOGGER.info("Returning saved carDto {}", carDto);
-        return ResponseEntity.ok().body(carDto);
+        LOGGER.info("Returning saved carDto {}", bookDto);
+        return ResponseEntity.ok().body(bookDto);
     }
 
     @GetMapping("/brands")
+    @PermitAll
     public ResponseEntity<?> getCarBrands() {
         LOGGER.info("Getting car brands");
         var brands = carBrandService.getAllBrands();
@@ -64,6 +70,7 @@ public class CarController {
         return ResponseEntity.ok().body(brands);
     }
 
+    @PermitAll
     @GetMapping("/{id}/models")
     public ResponseEntity<?> getCarModelsByBrandId(@PathVariable Long id) {
         LOGGER.info("Getting car models by id {}", id);
@@ -73,6 +80,7 @@ public class CarController {
     }
 
     @GetMapping("/best/{count}")
+    @PermitAll
     public ResponseEntity<?> getBestCarsOfCount(@PathVariable Long count) {
         LOGGER.info("Getting {} best cars}", count);
         var cars = carService.getBestCars(count);
@@ -81,6 +89,7 @@ public class CarController {
     }
 
     @GetMapping("/{id}")
+    @PermitAll
     public ResponseEntity<?> getCarById(@PathVariable Long id) {
         LOGGER.info("Getting car with id {}", id);
         CarDto car = null;
@@ -108,6 +117,7 @@ public class CarController {
 
 
     @PostMapping("/wishlist/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> addToWishList(@PathVariable Long id,
                                            @AuthenticationPrincipal UserDetailsImpl user) {
         LOGGER.info("Adding car with id {} to wishlist", id);
@@ -129,6 +139,7 @@ public class CarController {
         return ResponseEntity.ok().body(userDto);
     }
     @PostMapping("/delete-wishlist/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteFromWishList(@PathVariable Long id,
                                            @AuthenticationPrincipal UserDetailsImpl user) {
         LOGGER.info("Removing car with id {} from wishlist", id);
@@ -148,5 +159,28 @@ public class CarController {
         }
         LOGGER.info("Returning status 200(OK) and userDto {}", userDto.toString());
         return ResponseEntity.ok().body(userDto);
+    }
+    @PostMapping("/book/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> bookCar(@RequestBody BookForm book,
+                                     @PathVariable Long id,
+                                     @AuthenticationPrincipal UserDetailsImpl user) {
+
+        LOGGER.info(
+                "Got BookForm with start {} and end {}",
+                book.getStart(),
+                book.getEnd()
+        );
+        CarDto carDto = null;
+        try {
+            carDto = bookService.bookCar(book, id, user.getUser());
+        } catch (TransportNotFoundException e) {
+            LOGGER.info("Car is not found");
+            var myBody = new MyResponseBody(MyStatus.TRANSPORT_IS_NOT_FOUND);
+            LOGGER.info("Returning {}", myBody);
+            return ResponseEntity.ok().body(myBody);
+        }
+        LOGGER.info("Returning status 200(OK) and BookDto {}", carDto.toString());
+        return ResponseEntity.ok().body(carDto);
     }
 }

@@ -34,7 +34,13 @@ enum MyStatus {
     MODEL_IS_NOT_FOUND(9, "Модель не найдена"),
     TRANSPORT_IS_BLOCKED(10, "Транспорт заблокирован"),
     TRANSPORT_IS_DELETED(11, "Транспорт удален"),
-    TRANSPORT_IS_NOT_FOUND(12, "Транспорт не найден");
+    TRANSPORT_IS_NOT_FOUND(12, "Транспорт не найден"),
+    USER_IS_ALREADY_ADMIN(13, "Пользователь уже является администратором"),
+    USER_IS_ALREADY_NOT_ADMIN(14, "Пользователь не является администратором"),
+    USER_IS_ALREADY_DELETED(15, "Пользователь уже удален"),
+    USER_IS_ALREADY_NOT_DELETED(16, "Пользователь не удален"),
+    USER_IS_ALREADY_BLOCKED(17, "Пользователь уже заблокирован"),
+    USER_IS_ALREADY_NOT_BLOCKED(18, "Пользователь не заблокирован");
 
     private final int statusNumber;
     private final String message;

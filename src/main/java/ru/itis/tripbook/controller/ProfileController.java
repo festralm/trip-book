@@ -33,22 +33,6 @@ public class ProfileController {
         try {
             userDto = userService.getUserById(id);
         } catch (UserIsBlockedException e) {
-            //todo
-        } catch (UserIsDeletedException e) {
-            //todo
-        } catch (UserNotFoundException e) {
-            return new ResponseEntity<>("User is not found", HttpStatus.NO_CONTENT);
-        }
-        return ResponseEntity.ok(userDto);
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/profile")
-    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetailsImpl user) {
-        UserDto userDto = null;
-        try {
-            userDto = userService.getUserById(user.getUser().getId());
-        } catch (UserIsBlockedException e) {
             LOGGER.info("User is blocked");
             var myBody = new MyResponseBody(MyStatus.USER_IS_BLOCKED);
             LOGGER.info("Returning {}", myBody);
@@ -64,7 +48,13 @@ public class ProfileController {
             LOGGER.info("Returning {}", myBody);
             return ResponseEntity.ok().body(myBody);
         }
-        LOGGER.info("Returning status 200(OK) and userDto {} with {} cars", userDto);
+        LOGGER.info("Returning status 200(OK) and userDto {} with cars", userDto);
         return ResponseEntity.ok(userDto);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/profile")
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetailsImpl user) {
+        return getUserById(user.getUser().getId());
     }
 }

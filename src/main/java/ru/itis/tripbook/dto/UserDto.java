@@ -1,13 +1,15 @@
 package ru.itis.tripbook.dto;
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.itis.tripbook.model.Book;
 import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.model.Role;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,10 @@ public class UserDto {
     private Role role;
     private List<CarForUserDto> cars;
     private List<CarForUserDto> wishlist;
+    private List<CarBookForUserDto> books;
+    private String name;
+    private Timestamp joined;
+    private String description;
 
     public static UserDto from(User user) {
         return UserDto.builder()
@@ -31,11 +37,15 @@ public class UserDto {
                 .role(user.getRole())
                 .cars(CarForUserDto.from(user.getCars()))
                 .wishlist(CarForUserDto.from(user.getWishedCars()))
+                .books(CarBookForUserDto.from(user.getBooks()))
+                .name(user.getName())
+                .joined(user.getJoined())
+                .description(user.getDescription())
                 .build();
     }
 
     public static List<UserDto> from(List<User> users) {
-        return users.stream()
+        return users == null ? new ArrayList<>() : users.stream()
                 .map(UserDto::from)
                 .collect(Collectors.toList());
     }

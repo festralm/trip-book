@@ -67,4 +67,7 @@ public class Car {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "car" )
+    private List<Book> books;
+
 }
