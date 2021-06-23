@@ -11,10 +11,13 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     @Query(nativeQuery = true,
             value = "select * from car " +
+                    "left join account on car.user_id = account.id " +
                     "where " +
                     "car.finish >= now() and " +
                     "car.is_blocked = false and " +
-                    "car.is_deleted = false " +
+                    "car.is_deleted = false and " +
+                    "account.is_blocked = false and " +
+                    "account.is_deleted = false " +
                     "order by car.rating desc " +
                     "limit :count")
     public List<Car> getBestOfCount(@Param("count") Long count);

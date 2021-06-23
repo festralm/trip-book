@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.itis.tripbook.annotation.Loggable;
 import ru.itis.tripbook.dto.CarBrandDto;
 import ru.itis.tripbook.dto.CarModelDto;
 import ru.itis.tripbook.exception.CarBrandNotFoundException;
@@ -16,27 +17,20 @@ import java.util.List;
 
 @Service
 public class CarModelServiceImpl implements CarModelService {
-
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(CarModelService.class);
-
     @Autowired
     private CarModelRepository carModelRepository;
 
     @Override
+    @Loggable
     public List<CarModelDto> getModelsByBrandId(Long id) {
         var models = carModelRepository.getAllByBrandId(id);
-        var modelsDto = CarModelDto.from(models);
-        LOGGER.info("Returning all {} models by brand id {}", modelsDto.size(), id);
-        return modelsDto;
+        return CarModelDto.from(models);
     }
 
     @Override
+    @Loggable
     public CarModel getModelById(Long modelId) throws CarModelNotFoundException {
-        LOGGER.info("Looking for model with id {}", modelId);
-        var model = carModelRepository.findById(modelId)
+        return carModelRepository.findById(modelId)
                 .orElseThrow(() -> new CarModelNotFoundException(modelId));
-        LOGGER.info("Returning model");
-        return model;
     }
 }

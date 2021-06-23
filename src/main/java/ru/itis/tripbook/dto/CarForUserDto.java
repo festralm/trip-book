@@ -23,9 +23,6 @@ public class CarForUserDto {
     private String brand;
     private String model;
     private String name;
-    private Long price;
-    private Boolean forHour;
-    private String description;
     private Timestamp start;
     private Timestamp finish;
     private List<String> carPhotoUrls;
@@ -39,9 +36,6 @@ public class CarForUserDto {
                 .brand(car.getBrand().getName())
                 .model(car.getModel().getName())
                 .name(car.getName())
-                .price(car.getPrice())
-                .forHour(car.getForHour())
-                .description(car.getDescription())
                 .start(car.getStart())
                 .finish(car.getFinish())
                 .carPhotoUrls(
@@ -59,5 +53,20 @@ public class CarForUserDto {
         return cars == null ? new ArrayList<>() : cars.stream()
                 .map(CarForUserDto::from)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String toString() {
+        return "CarForUserDto{" +
+                "id=" + id +
+                ", withDriver=" + withDriver +
+                ", brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", name='" + name + '\'' +
+                ", start=" + start +
+                ", finish=" + finish +
+                ", " + carPhotoUrls.size() + " carPhotoUrls" +
+                ", rating='" + rating + '\'' +
+                '}';
     }
 }

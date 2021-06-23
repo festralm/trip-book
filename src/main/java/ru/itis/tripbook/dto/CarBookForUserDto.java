@@ -26,11 +26,9 @@ public class CarBookForUserDto {
     private String name;
     private Long price;
     private Boolean forHour;
-    private String description;
     private Timestamp start;
     private Timestamp finish;
     private List<String> carPhotoUrls;
-    private String rating;
 
 
     public static CarBookForUserDto from(Book book) {
@@ -43,7 +41,6 @@ public class CarBookForUserDto {
                 .name(car.getName())
                 .price(car.getPrice())
                 .forHour(car.getForHour())
-                .description(car.getDescription())
                 .start(book.getStart())
                 .finish(book.getFinish())
                 .carPhotoUrls(
@@ -53,7 +50,6 @@ public class CarBookForUserDto {
                                 .map(CarPhotoUrl::getUrl)
                                 .collect(Collectors.toList())
                 )
-                .rating(String.format(Locale.US, "%.2f", car.getRating()))
                 .build();
     }
 
@@ -61,5 +57,21 @@ public class CarBookForUserDto {
         return books == null ? new ArrayList<>() : books.stream()
                 .map(CarBookForUserDto::from)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public String toString() {
+        return "CarBookForUserDto{" +
+                "id=" + id +
+                ", withDriver=" + withDriver +
+                ", brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", forHour=" + forHour +
+                ", start=" + start +
+                ", finish=" + finish +
+                ", " + carPhotoUrls.size() + " carPhotoUrls" +
+                '}';
     }
 }

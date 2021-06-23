@@ -52,4 +52,22 @@ public class UserAdminDto {
                 .map(UserAdminDto::from)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return "UserAdminDto{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", isBlocked=" + isBlocked +
+                ", isDeleted=" + isDeleted +
+                ", role=" + role +
+                ", " + cars.size() + " cars" +
+                ", " + wishlist.size() + " wishlist" +
+                ", books=" + books +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", joined=" + joined +
+                '}';
+    }
 }

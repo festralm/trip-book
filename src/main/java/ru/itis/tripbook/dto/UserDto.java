@@ -49,4 +49,20 @@ public class UserDto {
                 .map(UserDto::from)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", role=" + role +
+                ", " + cars.size() + " cars" +
+                ", " + wishlist.size() + " wishlist" +
+                ", " + books.size() + " books" +
+                ", name='" + name + '\'' +
+                ", joined=" + joined +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

@@ -37,4 +37,14 @@ public class BookDto {
                         .map(BookDto::from)
                         .collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return "BookDto{" +
+                "start=" + start +
+                ", end=" + end +
+                ", carId=" + carId +
+                ", userId=" + userId +
+                '}';
+    }
 }

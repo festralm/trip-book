@@ -55,4 +55,6 @@ public class User {
     @Column
     private String description;
 
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews;
 }

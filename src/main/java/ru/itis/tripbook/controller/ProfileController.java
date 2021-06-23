@@ -1,5 +1,6 @@
 package ru.itis.tripbook.controller;
 
+import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import ru.itis.tripbook.annotation.Loggable;
+import ru.itis.tripbook.annotation.ResultLoggable;
 import ru.itis.tripbook.dto.UserDto;
 import ru.itis.tripbook.exception.UserIsBlockedException;
 import ru.itis.tripbook.exception.UserIsDeletedException;
@@ -22,39 +25,36 @@ import javax.annotation.security.PermitAll;
 
 @RestController
 public class ProfileController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileController.class);
     @Autowired
     private UserService userService;
 
+    @Loggable
     @GetMapping("/users/{id}")
     @PermitAll
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        UserDto userDto = null;
         try {
-            userDto = userService.getUserById(id);
+            return ResponseEntity.ok().body(userService.getUserById(id));
         } catch (UserIsBlockedException e) {
-            LOGGER.info("User is blocked");
-            var myBody = new MyResponseBody(MyStatus.USER_IS_BLOCKED);
-            LOGGER.info("Returning {}", myBody);
-            return ResponseEntity.ok().body(myBody);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } catch (UserIsDeletedException e) {
-            LOGGER.info("User is deleted");
-            var myBody = new MyResponseBody(MyStatus.USER_IS_DELETED);
-            LOGGER.info("Returning {}", myBody);
-            return ResponseEntity.ok().body(myBody);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } catch (UserNotFoundException e) {
-            LOGGER.info("User is not found");
-            var myBody = new MyResponseBody(MyStatus.USER_IS_NOT_FOUND);
-            LOGGER.info("Returning {}", myBody);
-            return ResponseEntity.ok().body(myBody);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        LOGGER.info("Returning status 200(OK) and userDto {} with cars", userDto);
-        return ResponseEntity.ok(userDto);
     }
 
+    @ResultLoggable
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetailsImpl user) {
-        return getUserById(user.getUser().getId());
+        try {
+            return ResponseEntity.ok().body(userService.getUserById(user.getUser().getId()));
+        } catch (UserIsBlockedException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (UserIsDeletedException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
     }
 }

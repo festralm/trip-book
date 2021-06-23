@@ -64,4 +64,24 @@ public class CarDto {
                 .map(CarDto::from)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return "CarDto{" +
+                "id=" + id +
+                ", withDriver=" + withDriver +
+                ", brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", forHour=" + forHour +
+                ", description='" + description + '\'' +
+                ", start=" + start +
+                ", finish=" + finish +
+                ", " + carPhotoUrls.size() + " carPhotoUrls" +
+                ", user=" + user +
+                ", rating='" + rating + '\'' +
+                ", " + books.size() + " books" +
+                '}';
+    }
 }

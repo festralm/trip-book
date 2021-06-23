@@ -18,20 +18,16 @@ import java.util.stream.Collectors;
 @Builder
 public class UserForCarDto {
     private Long id;
-    private String email;
     private String photoUrl;
     private String name;
     private Timestamp joined;
-    private String description;
 
     public static UserForCarDto from(User user) {
         return UserForCarDto.builder()
                 .id(user.getId())
-                .email(user.getEmail())
                 .photoUrl(user.getPhotoUrl())
                 .name(user.getName())
                 .joined(user.getJoined())
-                .description(user.getDescription())
                 .build();
     }
 
