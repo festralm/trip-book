@@ -12,7 +12,6 @@ import ru.itis.tripbook.controller.AdminController;
 @Aspect
 @Component
 public class MethodLogger {
-
     @Around("@annotation(ru.itis.tripbook.annotation.Loggable)")
     public Object around(ProceedingJoinPoint point) throws Throwable {
         var start = System.currentTimeMillis();
