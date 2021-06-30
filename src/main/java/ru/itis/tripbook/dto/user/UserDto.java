@@ -1,9 +1,12 @@
-package ru.itis.tripbook.dto;
+package ru.itis.tripbook.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.itis.tripbook.dto.car.CarBookForUserDto;
+import ru.itis.tripbook.dto.car.CarForUserDto;
+import ru.itis.tripbook.dto.review.ReviewForUserDto;
 import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.model.Role;
 
@@ -16,7 +19,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserAdminDto {
+public class UserDto {
     private Long id;
     private String email;
     private String photoUrl;
@@ -31,46 +34,49 @@ public class UserAdminDto {
     private Timestamp joined;
     private List<ReviewForUserDto> reviews;
 
-    public static UserAdminDto from(User user) {
-        return UserAdminDto.builder()
+    public static UserDto from(User user, boolean allDetails) {
+        var userDto = UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .photoUrl(user.getPhotoUrl())
-                .isBlocked(user.getIsBlocked())
-                .isDeleted(user.getIsDeleted())
                 .role(user.getRole())
-                .cars(CarForUserDto.from(user.getCars()))
-                .wishlist(CarForUserDto.from(user.getWishedCars()))
-                .books(CarBookForUserDto.from(user.getBooks()))
+                .cars(CarForUserDto.from(user.getCars(), allDetails))
+                .wishlist(CarForUserDto.from(user.getWishedCars(), allDetails))
+                .books(CarBookForUserDto.from(user.getBooks(), allDetails))
                 .name(user.getName())
                 .joined(user.getJoined())
                 .description(user.getDescription())
-                .reviews(ReviewForUserDto.from(user.getReviews()))
+                .reviews(ReviewForUserDto.from(user.getReviews(), allDetails))
                 .build();
+        if (allDetails) {
+            userDto.setIsDeleted(user.getIsDeleted());
+            userDto.setIsBlocked(user.getIsBlocked());
+        }
+        return userDto;
     }
 
-    public static List<UserAdminDto> from(List<User> users) {
+    public static List<UserDto> from(List<User> users, boolean allDetails) {
         return users == null ? new ArrayList<>() : users.stream()
-                .map(UserAdminDto::from)
+                .filter(x ->
+                        !x.getIsBlocked() &&
+                                !x.getIsDeleted())
+                .map(x -> UserDto.from(x, allDetails))
                 .collect(Collectors.toList());
     }
 
     @Override
     public String toString() {
-        return "UserAdminDto{" +
+        return "UserDto{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", photoUrl='" + photoUrl + '\'' +
-                ", isBlocked=" + isBlocked +
-                ", isDeleted=" + isDeleted +
                 ", role=" + role +
                 ", " + cars.size() + " cars" +
                 ", " + wishlist.size() + " wishlist" +
-                ", books=" + books +
+                ", " + books.size() + " books" +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
                 ", joined=" + joined +
-                ", " + reviews.size() + " reviews" +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

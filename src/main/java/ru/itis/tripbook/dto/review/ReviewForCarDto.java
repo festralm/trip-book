@@ -1,9 +1,10 @@
-package ru.itis.tripbook.dto;
+package ru.itis.tripbook.dto.review;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.itis.tripbook.dto.user.UserForCarDto;
 import ru.itis.tripbook.model.Review;
 
 import java.sql.Timestamp;
@@ -25,16 +26,17 @@ public class ReviewForCarDto {
     public static ReviewForCarDto from(Review review) {
         return ReviewForCarDto.builder()
                 .id(review.getId())
+                .user(UserForCarDto.from(review.getUser()))
                 .text(review.getText())
                 .rating(review.getRating())
                 .datetime(review.getDatetime())
                 .build();
     }
 
-    public static List<ReviewForCarDto> from(List<Review> reviews) {
+    public static List<ReviewForCarDto> from(List<Review> reviews, boolean allDetails) {
         return reviews
                 .stream()
-                .filter(x ->
+                .filter(x -> allDetails ||
                         !x.getCar().getIsBlocked() &&
                                 !x.getCar().getIsDeleted() &&
                                 !x.getUser().getIsDeleted() &&

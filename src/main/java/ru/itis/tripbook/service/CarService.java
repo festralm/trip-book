@@ -1,7 +1,8 @@
 package ru.itis.tripbook.service;
 
 import org.springframework.stereotype.Service;
-import ru.itis.tripbook.dto.*;
+import ru.itis.tripbook.dto.car.CarDto;
+import ru.itis.tripbook.dto.car.CarForm;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.Car;
 
@@ -18,4 +19,11 @@ public interface CarService {
 
     Car getCarByIdAllDetails(Long id) throws TransportNotFoundException;
 
+    CarDto deleteCarById(Long id) throws TransportNotFoundException, TransportIsDeletedException;
+
+    CarDto restoreCarById(Long id) throws TransportNotFoundException, TransportIsNotDeletedException;
+
+    CarDto banCarById(Long id) throws TransportNotFoundException, TransportIsBlockedException;
+
+    CarDto unbanCarById(Long id) throws TransportNotFoundException, TransportIsNotBlockedException;
 }

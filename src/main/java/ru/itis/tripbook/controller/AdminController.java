@@ -1,15 +1,14 @@
 package ru.itis.tripbook.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.itis.tripbook.annotation.Loggable;
-import ru.itis.tripbook.dto.UserAdminForm;
+import ru.itis.tripbook.dto.admin.UserAdminForm;
 import ru.itis.tripbook.exception.*;
+import ru.itis.tripbook.service.CarService;
 import ru.itis.tripbook.service.UserService;
 
 import java.util.List;
@@ -21,6 +20,9 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CarService carService;
 
     @Loggable
     @GetMapping("/users/{id}")
@@ -55,7 +57,6 @@ public class AdminController {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
-
     @Loggable
     @PostMapping("/users/ban/{id}")
     public ResponseEntity<?> blockUserById(@PathVariable Long id) {
@@ -109,4 +110,52 @@ public class AdminController {
     public ResponseEntity<List<?>> findUsers(@RequestBody UserAdminForm user) {
         return ResponseEntity.ok().body(userService.findUsers(user));
     }
+
+
+    @Loggable
+    @PostMapping("/cars/delete/{id}")
+    public ResponseEntity<?> deleteCarById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok().body(carService.deleteCarById(id));
+        } catch (TransportNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (TransportIsDeletedException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+    @Loggable
+    @PostMapping("/cars/restore/{id}")
+    public ResponseEntity<?> restoreCarById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok().body(carService.restoreCarById(id));
+        } catch (TransportNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (TransportIsNotDeletedException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @Loggable
+    @PostMapping("/cars/ban/{id}")
+    public ResponseEntity<?> banCarById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok().body(carService.banCarById(id));
+        } catch (TransportNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (TransportIsBlockedException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+    @Loggable
+    @PostMapping("/cars/unban/{id}")
+    public ResponseEntity<?> unbanCarById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok().body(carService.unbanCarById(id));
+        } catch (TransportNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (TransportIsNotBlockedException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
 }

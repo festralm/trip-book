@@ -1,6 +1,6 @@
 package ru.itis.tripbook.service;
 
-import ru.itis.tripbook.dto.CarBrandDto;
+import ru.itis.tripbook.dto.car.CarBrandDto;
 import ru.itis.tripbook.exception.CarBrandNotFoundException;
 import ru.itis.tripbook.model.CarBrand;
 

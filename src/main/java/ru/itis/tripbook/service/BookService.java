@@ -1,8 +1,7 @@
 package ru.itis.tripbook.service;
 
-import ru.itis.tripbook.dto.BookDto;
-import ru.itis.tripbook.dto.BookForm;
-import ru.itis.tripbook.dto.CarDto;
+import ru.itis.tripbook.dto.book.BookForm;
+import ru.itis.tripbook.dto.car.CarDto;
 import ru.itis.tripbook.exception.TransportIsBlockedException;
 import ru.itis.tripbook.exception.TransportIsDeletedException;
 import ru.itis.tripbook.exception.TransportNotFoundException;

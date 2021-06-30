@@ -1,13 +1,10 @@
 package ru.itis.tripbook.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.itis.tripbook.annotation.ResultLoggable;
-import ru.itis.tripbook.dto.BookDto;
-import ru.itis.tripbook.dto.BookForm;
-import ru.itis.tripbook.dto.CarDto;
+import ru.itis.tripbook.dto.book.BookForm;
+import ru.itis.tripbook.dto.car.CarDto;
 import ru.itis.tripbook.exception.TransportIsBlockedException;
 import ru.itis.tripbook.exception.TransportIsDeletedException;
 import ru.itis.tripbook.exception.TransportNotFoundException;
@@ -47,6 +44,6 @@ public class BookServiceImpl implements BookService {
                         .user(bookForm.getUser())
                         .build()
         );
-        return CarDto.from(car);
+        return CarDto.from(car, false);
     }
 }

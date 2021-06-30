@@ -3,8 +3,8 @@ package ru.itis.tripbook.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.itis.tripbook.annotation.ResultLoggable;
-import ru.itis.tripbook.dto.CarDto;
-import ru.itis.tripbook.dto.ReviewForm;
+import ru.itis.tripbook.dto.car.CarDto;
+import ru.itis.tripbook.dto.review.ReviewForm;
 import ru.itis.tripbook.exception.TransportNotFoundException;
 import ru.itis.tripbook.model.Review;
 import ru.itis.tripbook.repository.ReviewRepository;
@@ -34,6 +34,6 @@ public class ReviewServiceImpl implements ReviewService {
                         .build()
         );
 
-        return CarDto.from(car);
+        return CarDto.from(car, true);
     }
 }

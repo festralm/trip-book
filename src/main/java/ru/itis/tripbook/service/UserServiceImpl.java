@@ -1,8 +1,5 @@
 package ru.itis.tripbook.service;
 
-import lombok.extern.java.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,19 +7,16 @@ import org.springframework.stereotype.Service;
 import ru.itis.tripbook.annotation.ExecutionLoggable;
 import ru.itis.tripbook.annotation.Loggable;
 import ru.itis.tripbook.annotation.SignatureLoggable;
-import ru.itis.tripbook.dto.UserAdminDto;
-import ru.itis.tripbook.dto.UserAdminForm;
-import ru.itis.tripbook.dto.UserDto;
-import ru.itis.tripbook.dto.UserSignUpForm;
+import ru.itis.tripbook.dto.admin.UserAdminForm;
+import ru.itis.tripbook.dto.user.UserDto;
+import ru.itis.tripbook.dto.user.UserSignUpForm;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.Role;
 import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.repository.UserRepository;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -69,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Loggable
-    public UserAdminDto deleteUserById(Long id)
+    public UserDto deleteUserById(Long id)
             throws UserIsDeletedException,
             UserNotFoundException {
         var user = getUserByIdAllDetails(id);
@@ -78,24 +72,24 @@ public class UserServiceImpl implements UserService {
         }
         user.setIsDeleted(true);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserDto.from(user, true);
     }
 
     @Loggable
     @Override
-    public UserAdminDto restoreUserById(Long id) throws UserIsNotDeletedException, UserNotFoundException {
+    public UserDto restoreUserById(Long id) throws UserIsNotDeletedException, UserNotFoundException {
         var user = getUserByIdAllDetails(id);
         if (!user.getIsDeleted()) {
             throw new UserIsNotDeletedException(user.getEmail());
         }
         user.setIsDeleted(false);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserDto.from(user, true);
     }
 
     @Override
     @Loggable
-    public UserAdminDto blockUserById(Long id)
+    public UserDto blockUserById(Long id)
             throws UserIsBlockedException,
             UserNotFoundException {
         var user = getUserByIdAllDetails(id);
@@ -104,13 +98,13 @@ public class UserServiceImpl implements UserService {
         }
         user.setIsBlocked(true);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserDto.from(user, true);
     }
 
 
     @Override
     @Loggable
-    public UserAdminDto unblockUserById(Long id)
+    public UserDto unblockUserById(Long id)
             throws UserIsNotBlockedException,
             UserNotFoundException {
         var user = getUserByIdAllDetails(id);
@@ -119,12 +113,12 @@ public class UserServiceImpl implements UserService {
         }
         user.setIsBlocked(false);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserDto.from(user, true);
     }
 
     @Override
     @Loggable
-    public UserAdminDto makeAdminById(Long id)
+    public UserDto makeAdminById(Long id)
             throws UserIsAlreadyAdminException,
             UserNotFoundException {
         var user = getUserByIdAllDetails(id);
@@ -133,12 +127,12 @@ public class UserServiceImpl implements UserService {
         }
         user.setRole(Role.ADMIN);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserDto.from(user, true);
     }
 
     @Override
     @Loggable
-    public UserAdminDto undoAdminById(Long id)
+    public UserDto undoAdminById(Long id)
             throws UserIsNotAdminException,
             UserNotFoundException {
         var user = getUserByIdAllDetails(id);
@@ -147,7 +141,7 @@ public class UserServiceImpl implements UserService {
         }
         user.setRole(Role.USER);
         userRepository.save(user);
-        return UserAdminDto.from(user);
+        return UserDto.from(user, true);
     }
 
 
@@ -160,7 +154,7 @@ public class UserServiceImpl implements UserService {
             UserNotFoundException
     {
         var user = getUserByIdAllDetails(id);
-        var userDto = UserDto.from(user);
+        var userDto = UserDto.from(user, false);
         if (user.getIsBlocked()) {
             throw new UserIsBlockedException(user.getEmail());
         }
@@ -180,14 +174,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Loggable
-    public List<UserAdminDto> findUsers(UserAdminForm user) {
-        return UserAdminDto.from(userRepository.findUsersByParams(
+    public List<UserDto> findUsers(UserAdminForm user) {
+        return UserDto.from(userRepository.findUsersByParams(
                 user.getId(),
                 user.getEmail(),
                 user.getIsDeleted(),
                 user.getIsBlocked(),
                 user.getRole()
-        ));
+        ), true);
     }
 
     @Override
@@ -199,7 +193,7 @@ public class UserServiceImpl implements UserService {
         var car = carService.getCarByIdAllDetails(carId);
         user.getWishedCars().add(car);
         userRepository.save(user);
-        return UserDto.from(user);
+        return UserDto.from(user, false);
     }
 
     @Override
@@ -209,12 +203,12 @@ public class UserServiceImpl implements UserService {
         var car = carService.getCarByIdAllDetails(carId);;
         user.getWishedCars().remove(car);
         userRepository.save(user);
-        return UserDto.from(user);
+        return UserDto.from(user, false);
     }
 
     @Override
     @Loggable
-    public UserAdminDto getUserByIdForAdmin(Long id) throws UserNotFoundException {
-        return UserAdminDto.from(getUserByIdAllDetails(id));
+    public UserDto getUserByIdForAdmin(Long id) throws UserNotFoundException {
+        return UserDto.from(getUserByIdAllDetails(id), true);
     }
 }
