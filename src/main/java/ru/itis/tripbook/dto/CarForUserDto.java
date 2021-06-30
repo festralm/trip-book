@@ -27,9 +27,15 @@ public class CarForUserDto {
     private Timestamp finish;
     private List<String> carPhotoUrls;
     private String rating;
+    private List<ReviewForCarDto> reviews;
 
 
     public static CarForUserDto from(Car car) {
+        var rating = 0.0;
+        for (var review :
+                car.getReviews()) {
+            rating += review.getRating();
+        }
         return CarForUserDto.builder()
                 .id(car.getId())
                 .withDriver(car.getWithDriver())
@@ -45,12 +51,16 @@ public class CarForUserDto {
                                 .map(CarPhotoUrl::getUrl)
                                 .collect(Collectors.toList())
                 )
-                .rating(String.format(Locale.US, "%.2f", car.getRating()))
+                .reviews(ReviewForCarDto.from(car.getReviews()))
+                .rating(String.format(Locale.US, "%.2f", rating))
                 .build();
     }
 
     public static List<CarForUserDto> from(List<Car> cars) {
         return cars == null ? new ArrayList<>() : cars.stream()
+                .filter(x ->
+                        !x.getIsBlocked() &&
+                                !x.getIsDeleted())
                 .map(CarForUserDto::from)
                 .collect(Collectors.toList());
     }

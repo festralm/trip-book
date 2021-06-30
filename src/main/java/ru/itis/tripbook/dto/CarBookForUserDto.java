@@ -55,6 +55,10 @@ public class CarBookForUserDto {
 
     public static List<CarBookForUserDto> from(List<Book> books) {
         return books == null ? new ArrayList<>() : books.stream()
+                .filter(x -> !x.getCar().getIsDeleted()
+                && !x.getCar().getIsBlocked() &&
+                        !x.getUser().getIsBlocked() &&
+                        !x.getUser().getIsDeleted())
                 .map(CarBookForUserDto::from)
                 .collect(Collectors.toList());
     }

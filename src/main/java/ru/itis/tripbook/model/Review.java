@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table
@@ -20,6 +21,12 @@ public class Review {
 
     @Column
     private String text;
+
+    @Column
+    private Integer rating;
+
+    @Column
+    private Timestamp datetime;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ru.itis.tripbook.annotation.Loggable;
 import ru.itis.tripbook.annotation.ResultLoggable;
@@ -34,6 +35,9 @@ public class CarController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
@@ -143,6 +147,21 @@ public class CarController {
         } catch (TransportIsBlockedException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } catch (TransportIsDeletedException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @PostMapping("/review/{id}")
+    @PreAuthorize("isAuthenticated()")
+    @ResultLoggable
+    public ResponseEntity<?> saveReview(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetailsImpl user,
+            @RequestBody ReviewForm review) {
+        review.setUser(user.getUser());
+        try {
+            return ResponseEntity.ok().body(reviewService.saveReview(id, review));
+        } catch (TransportNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }

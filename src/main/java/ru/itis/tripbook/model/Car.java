@@ -55,9 +55,6 @@ public class Car {
     private List<CarPhotoUrl> carPhotoUrls;
 
     @Column
-    private Double rating;
-
-    @Column
     private Boolean isDeleted;
 
     @Column

@@ -29,6 +29,7 @@ public class UserAdminDto {
     private String name;
     private String description;
     private Timestamp joined;
+    private List<ReviewForUserDto> reviews;
 
     public static UserAdminDto from(User user) {
         return UserAdminDto.builder()
@@ -44,6 +45,7 @@ public class UserAdminDto {
                 .name(user.getName())
                 .joined(user.getJoined())
                 .description(user.getDescription())
+                .reviews(ReviewForUserDto.from(user.getReviews()))
                 .build();
     }
 
@@ -68,6 +70,7 @@ public class UserAdminDto {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", joined=" + joined +
+                ", " + reviews.size() + " reviews" +
                 '}';
     }
 }
