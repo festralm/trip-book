@@ -8,6 +8,7 @@ import ru.itis.tripbook.model.CarBrand;
 import ru.itis.tripbook.model.CarModel;
 import ru.itis.tripbook.model.Role;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface CarRepository extends JpaRepository<Car, Long> {
@@ -25,7 +26,7 @@ public interface CarRepository extends JpaRepository<Car, Long> {
                     "group by car.id " +
                     "order by count(review.id) desc " +
                     "limit :count")
-    public List<Car> getBestOfCount(@Param("count") Long count);
+    List<Car> getBestOfCount(@Param("count") Long count);
 
     @Query(value = "select car from Car car " +
             "where " +
@@ -42,5 +43,21 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             @Param("model") CarModel model,
             @Param("is_deleted") Boolean isDeleted,
             @Param("is_blocked") Boolean isBlocked
+    );
+
+    @Query(
+            value = "select car from Car car " +
+                    "where " +
+                    "(:start between car.start and car.finish) and " +
+                    "(:finish between car.start and car.finish) and" +
+                    "(:withDriver is null or car.withDriver = :withDriver) and" +
+                    "(:brand is null or car.brand = :brand) and" +
+                    "(:model is null or car.model = :model)")
+    List<Car> findCars(
+            @Param("start") Timestamp start,
+            @Param("finish") Timestamp finish,
+            @Param("withDriver") Boolean withDriver,
+            @Param("brand") CarBrand brand,
+            @Param("model") CarModel model
     );
 }

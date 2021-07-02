@@ -15,4 +15,6 @@ public class CarEditForm {
     private Timestamp finish;
     private Long price;
     private Boolean forHour;
+    private Double lat;
+    private Double lng;
 }

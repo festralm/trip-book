@@ -124,7 +124,7 @@ public class AdminController {
     @PostMapping("/car-search")
     public ResponseEntity<List<?>> findCars(@RequestBody CarAdminForm car) {
         try {
-            return ResponseEntity.ok().body(carService.findCars(car));
+            return ResponseEntity.ok().body(carService.findCarsForAdmin(car));
         } catch (CarBrandNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (CarModelNotFoundException e) {

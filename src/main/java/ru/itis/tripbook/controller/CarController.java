@@ -11,12 +11,14 @@ import ru.itis.tripbook.annotation.ResultLoggable;
 import ru.itis.tripbook.dto.book.BookForm;
 import ru.itis.tripbook.dto.car.CarEditForm;
 import ru.itis.tripbook.dto.car.CarForm;
+import ru.itis.tripbook.dto.car.CarSearchForm;
 import ru.itis.tripbook.dto.review.ReviewForm;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.security.UserDetailsImpl;
 import ru.itis.tripbook.service.*;
 
 import javax.annotation.security.PermitAll;
+import java.util.List;
 
 @RestController
 @RequestMapping("/car")
@@ -195,4 +197,15 @@ public class CarController {
         }
     }
 
+    @Loggable
+    @PostMapping("/search")
+    public ResponseEntity<List<?>> findUsers(@RequestBody CarSearchForm car) {
+        try {
+            return ResponseEntity.ok().body(carService.findCars(car));
+        } catch (CarBrandNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (CarModelNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

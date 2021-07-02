@@ -5,6 +5,7 @@ import ru.itis.tripbook.dto.admin.CarAdminForm;
 import ru.itis.tripbook.dto.car.CarDto;
 import ru.itis.tripbook.dto.car.CarEditForm;
 import ru.itis.tripbook.dto.car.CarForm;
+import ru.itis.tripbook.dto.car.CarSearchForm;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.Car;
 
@@ -33,5 +34,7 @@ public interface CarService {
 
     CarDto getCarByIdForAdmin(Long id) throws CarNotFoundException;
 
-    List<CarDto> findCars(CarAdminForm car) throws CarBrandNotFoundException, CarModelNotFoundException;
+    List<CarDto> findCarsForAdmin(CarAdminForm car) throws CarBrandNotFoundException, CarModelNotFoundException;
+
+    List<CarDto> findCars(CarSearchForm car) throws CarBrandNotFoundException, CarModelNotFoundException;
 }

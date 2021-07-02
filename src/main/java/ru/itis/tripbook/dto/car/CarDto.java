@@ -37,6 +37,8 @@ public class CarDto {
     private String rating;
     private List<BookDto> books;
     private List<ReviewForCarDto> reviews;
+    private Double lat;
+    private Double lng;
 
 
     public static CarDto from(Car car, boolean allDetails) {
@@ -62,6 +64,8 @@ public class CarDto {
                 .user(UserForCarDto.from(car.getUser()))
                 .books(BookDto.from(car.getBooks()))
                 .reviews(ReviewForCarDto.from(car.getReviews(), allDetails))
+                .lat(car.getLat())
+                .lng(car.getLng())
                 .build();
         var rating = 0.0;
         if (carDto.getReviews().size() != 0) {

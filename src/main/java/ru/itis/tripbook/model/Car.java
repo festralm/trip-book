@@ -71,4 +71,10 @@ public class Car {
 
     @OneToMany(mappedBy = "car")
     private List<Review> reviews;
+
+    @Column
+    private Double lat;
+
+    @Column
+    private Double lng;
 }

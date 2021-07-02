@@ -26,4 +26,6 @@ public class CarForm {
     private Timestamp finish;
     private List<String> carPhotoUrls;
     private User user;
+    private Double lat;
+    private Double lng;
 }

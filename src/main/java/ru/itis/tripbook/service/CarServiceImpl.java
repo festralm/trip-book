@@ -9,6 +9,7 @@ import ru.itis.tripbook.dto.admin.CarAdminForm;
 import ru.itis.tripbook.dto.car.CarDto;
 import ru.itis.tripbook.dto.car.CarEditForm;
 import ru.itis.tripbook.dto.car.CarForm;
+import ru.itis.tripbook.dto.car.CarSearchForm;
 import ru.itis.tripbook.dto.user.UserDto;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.Car;
@@ -61,6 +62,8 @@ public class CarServiceImpl implements CarService {
                 .model(carModelService.getModelById(carForm.getModel()))
                 .user(carForm.getUser())
                 .carPhotoUrls(photosList)
+                .lat(carForm.getLat())
+                .lng(carForm.getLng())
                 .build();
         for (var url : photosList) {
             url.setCar(car);
@@ -192,6 +195,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Loggable
     public CarDto getCarByIdForAdmin(Long id) throws CarNotFoundException {
 
         return CarDto.from(getCarByIdAllDetails(id), true);
@@ -199,7 +203,8 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<CarDto> findCars(CarAdminForm car) throws CarBrandNotFoundException, CarModelNotFoundException {
+    @Loggable
+    public List<CarDto> findCarsForAdmin(CarAdminForm car) throws CarBrandNotFoundException, CarModelNotFoundException {
 
         return CarDto.from(carRepository.findCarsByParams(
                 car.getId(),
@@ -209,6 +214,18 @@ public class CarServiceImpl implements CarService {
                 car.getIsDeleted(),
                 car.getIsBlocked()
         ), true);
+    }
+
+    @Override
+    @Loggable
+    public List<CarDto> findCars(CarSearchForm car) throws CarBrandNotFoundException, CarModelNotFoundException {
+        return CarDto.from(carRepository.findCars(
+                car.getStart(),
+                car.getFinish(),
+                car.getWithDriver(),
+                car.getBrand() == null ? null : carBrandService.getBrandById(car.getBrand()),
+                car.getModel() == null ? null : carModelService.getModelById(car.getModel())
+        ), false);
     }
 
 }
