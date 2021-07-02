@@ -9,13 +9,13 @@ import ru.itis.tripbook.annotation.Loggable;
 import ru.itis.tripbook.annotation.SignatureLoggable;
 import ru.itis.tripbook.dto.admin.UserAdminForm;
 import ru.itis.tripbook.dto.user.UserDto;
+import ru.itis.tripbook.dto.user.UserEditForm;
 import ru.itis.tripbook.dto.user.UserSignUpForm;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.Role;
 import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.repository.UserRepository;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Service
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
                     .isBlocked(false)
                     .isDeleted(false)
                     .role(Role.USER)
-                    .joined(new Timestamp(System.currentTimeMillis()))
+                    .joined(user.getJoined())
                     .build();
             userRepository.save(newUser);
             return newUser;
@@ -180,7 +180,8 @@ public class UserServiceImpl implements UserService {
                 user.getEmail(),
                 user.getIsDeleted(),
                 user.getIsBlocked(),
-                user.getRole()
+                user.getRole(),
+                user.getName()
         ), true);
     }
 
@@ -188,7 +189,7 @@ public class UserServiceImpl implements UserService {
     @Loggable
     public UserDto addToWishlist(Long carId, Long userId)
             throws UserNotFoundException,
-            TransportNotFoundException {
+            CarNotFoundException {
         var user = getUserByIdAllDetails(userId);
         var car = carService.getCarByIdAllDetails(carId);
         user.getWishedCars().add(car);
@@ -198,12 +199,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Loggable
-    public UserDto deleteFromWishlist(Long carId, Long userId) throws UserNotFoundException, TransportNotFoundException {
+    public UserDto deleteFromWishlist(Long carId, Long userId) throws UserNotFoundException, CarNotFoundException {
         var user = getUserByIdAllDetails(userId);
         var car = carService.getCarByIdAllDetails(carId);;
         user.getWishedCars().remove(car);
         userRepository.save(user);
         return UserDto.from(user, false);
+    }
+
+    @Override
+    @Loggable
+    public UserDto editUser(Long id, UserEditForm userForm) throws UserNotFoundException {
+        var user = getUserByIdAllDetails(id);
+        if (userForm.getName() != null) {
+            user.setName(userForm.getName());
+        }
+        if (userForm.getDescription() != null) {
+            user.setDescription(userForm.getDescription());
+        }
+        if (userForm.getPhotoUrl() != null) {
+            user.setPhotoUrl(userForm.getPhotoUrl());
+        }
+        return UserDto.from(userRepository.save(user), false);
+    }
+
+    @Override
+    public UserDto changePassword(Long id, String oldPassword, String newPassword)
+            throws UserNotFoundException, OldPasswordIsWrongException {
+        var user = getUserByIdAllDetails(id);
+        if (passwordEncoder.matches(oldPassword, user.getHashPassword())) {
+            user.setHashPassword(passwordEncoder.encode(newPassword));
+            return UserDto.from(userRepository.save(user), false);
+        } else {
+            throw new OldPasswordIsWrongException();
+        }
     }
 
     @Override

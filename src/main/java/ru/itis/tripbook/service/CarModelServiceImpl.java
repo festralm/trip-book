@@ -3,6 +3,7 @@ package ru.itis.tripbook.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.itis.tripbook.annotation.Loggable;
+import ru.itis.tripbook.annotation.SignatureLoggable;
 import ru.itis.tripbook.dto.car.CarModelDto;
 import ru.itis.tripbook.exception.CarModelNotFoundException;
 import ru.itis.tripbook.model.CarModel;
@@ -23,7 +24,7 @@ public class CarModelServiceImpl implements CarModelService {
     }
 
     @Override
-    @Loggable
+    @SignatureLoggable
     public CarModel getModelById(Long modelId) throws CarModelNotFoundException {
         return carModelRepository.findById(modelId)
                 .orElseThrow(() -> new CarModelNotFoundException(modelId));

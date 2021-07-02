@@ -81,7 +81,7 @@ public class CarDto {
 
     public static List<CarDto> from(List<Car> cars, boolean allDetails) {
         return cars == null ? new ArrayList<>() : cars.stream()
-                .filter(x ->
+                .filter(x -> allDetails ||
                         !x.getIsBlocked() &&
                         !x.getIsDeleted())
                 .map(x -> CarDto.from(x, allDetails))

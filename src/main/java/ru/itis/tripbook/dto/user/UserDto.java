@@ -57,7 +57,7 @@ public class UserDto {
 
     public static List<UserDto> from(List<User> users, boolean allDetails) {
         return users == null ? new ArrayList<>() : users.stream()
-                .filter(x ->
+                .filter(x -> allDetails ||
                         !x.getIsBlocked() &&
                                 !x.getIsDeleted())
                 .map(x -> UserDto.from(x, allDetails))

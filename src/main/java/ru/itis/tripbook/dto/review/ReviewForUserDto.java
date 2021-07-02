@@ -9,6 +9,7 @@ import ru.itis.tripbook.model.CarPhotoUrl;
 import ru.itis.tripbook.model.Review;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,7 @@ public class ReviewForUserDto {
     }
 
     public static List<ReviewForUserDto> from(List<Review> reviews, boolean allDetails) {
-        return reviews
+        return reviews == null ? new ArrayList<>() : reviews
                 .stream()
                 .filter(x -> allDetails ||
                         !x.getCar().getIsBlocked() &&

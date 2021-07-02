@@ -24,6 +24,7 @@ public class UserAdminForm {
     private Role role;
     private Timestamp joined;
     private String description;
+    private String name;
 
     public static UserAdminForm from(User user) {
         return UserAdminForm.builder()
@@ -34,6 +35,7 @@ public class UserAdminForm {
                 .role(user.getRole())
                 .joined(user.getJoined())
                 .description(user.getDescription())
+                .name(user.getName())
                 .build();
     }
 

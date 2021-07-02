@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @Builder
 public class CarBookForUserDto {
     private Long id;
+    private Long bookId;
     private Boolean withDriver;
     private String brand;
     private String model;

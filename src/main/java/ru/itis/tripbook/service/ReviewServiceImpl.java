@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.itis.tripbook.annotation.ResultLoggable;
 import ru.itis.tripbook.dto.car.CarDto;
 import ru.itis.tripbook.dto.review.ReviewForm;
-import ru.itis.tripbook.exception.TransportNotFoundException;
+import ru.itis.tripbook.exception.CarNotFoundException;
 import ru.itis.tripbook.model.Review;
 import ru.itis.tripbook.repository.ReviewRepository;
 
@@ -21,7 +21,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @ResultLoggable
     @Override
-    public CarDto saveReview(Long carId, ReviewForm review) throws TransportNotFoundException {
+    public CarDto saveReview(Long carId, ReviewForm review) throws CarNotFoundException {
         var car = carService.getCarByIdAllDetails(carId);
         review.setCar(car);
         var newReview = reviewRepository.save(

@@ -5,8 +5,11 @@ import org.springframework.stereotype.Service;
 import ru.itis.tripbook.annotation.Loggable;
 import ru.itis.tripbook.annotation.ResultLoggable;
 import ru.itis.tripbook.annotation.SignatureLoggable;
+import ru.itis.tripbook.dto.admin.CarAdminForm;
 import ru.itis.tripbook.dto.car.CarDto;
+import ru.itis.tripbook.dto.car.CarEditForm;
 import ru.itis.tripbook.dto.car.CarForm;
+import ru.itis.tripbook.dto.user.UserDto;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.Car;
 import ru.itis.tripbook.model.CarPhotoUrl;
@@ -77,33 +80,33 @@ public class CarServiceImpl implements CarService {
     @Loggable
     public CarDto getCarById(Long id)
             throws
-            TransportNotFoundException,
-            TransportIsBlockedException,
-            TransportIsDeletedException {
+            CarNotFoundException,
+            CarIsBlockedException,
+            CarIsDeletedException {
         var car = getCarByIdAllDetails(id);
         var carDto = CarDto.from(car, false);
         if (car.getIsBlocked()) {
-            throw new TransportIsBlockedException(id);
+            throw new CarIsBlockedException(id);
         }
         if (car.getIsDeleted()) {
-            throw new TransportIsDeletedException(id);
+            throw new CarIsDeletedException(id);
         }
         return carDto;
     }
 
     @Override
     @SignatureLoggable
-    public Car getCarByIdAllDetails(Long id) throws TransportNotFoundException {
+    public Car getCarByIdAllDetails(Long id) throws CarNotFoundException {
         return carRepository.findById(id)
-                .orElseThrow(() -> new TransportNotFoundException(id));
+                .orElseThrow(() -> new CarNotFoundException(id));
     }
 
     @SignatureLoggable
     @Override
-    public CarDto deleteCarById(Long id) throws TransportNotFoundException, TransportIsDeletedException {
+    public CarDto deleteCarById(Long id) throws CarNotFoundException, CarIsDeletedException {
         var car = getCarByIdAllDetails(id);
         if (car.getIsDeleted()) {
-            throw new TransportIsDeletedException(car.getId());
+            throw new CarIsDeletedException(car.getId());
         }
         car.setIsDeleted(true);
         carRepository.save(car);
@@ -111,10 +114,10 @@ public class CarServiceImpl implements CarService {
     }
     @SignatureLoggable
     @Override
-    public CarDto banCarById(Long id) throws TransportNotFoundException, TransportIsBlockedException {
+    public CarDto banCarById(Long id) throws CarNotFoundException, CarIsBlockedException {
         var car = getCarByIdAllDetails(id);
         if (car.getIsBlocked()) {
-            throw new TransportIsBlockedException(car.getId());
+            throw new CarIsBlockedException(car.getId());
         }
         car.setIsBlocked(true);
         carRepository.save(car);
@@ -124,11 +127,11 @@ public class CarServiceImpl implements CarService {
     @SignatureLoggable
     @Override
     public CarDto restoreCarById(Long id) throws
-            TransportNotFoundException,
-            TransportIsNotDeletedException {
+            CarNotFoundException,
+            CarIsNotDeletedException {
         var car = getCarByIdAllDetails(id);
         if (!car.getIsDeleted()) {
-            throw new TransportIsNotDeletedException(car.getId());
+            throw new CarIsNotDeletedException(car.getId());
         }
         car.setIsDeleted(false);
         carRepository.save(car);
@@ -137,14 +140,75 @@ public class CarServiceImpl implements CarService {
     @SignatureLoggable
     @Override
     public CarDto unbanCarById(Long id) throws
-            TransportNotFoundException, TransportIsNotBlockedException {
+            CarNotFoundException, CarIsNotBlockedException {
         var car = getCarByIdAllDetails(id);
         if (!car.getIsBlocked()) {
-            throw new TransportIsNotBlockedException(car.getId());
+            throw new CarIsNotBlockedException(car.getId());
         }
         car.setIsBlocked(false);
         carRepository.save(car);
         return CarDto.from(car, true);
+    }
+
+    @Override
+    @Loggable
+    public CarDto editCar(Long id, CarEditForm carForm) throws CarNotFoundException {
+        var car = getCarByIdAllDetails(id);
+        if (carForm.getName() != null) {
+            car.setName(carForm.getName());
+        }
+        if (carForm.getCarPhotoUrls() != null) {
+            for (int i = 0; i < car.getCarPhotoUrls().size(); i++) {
+                car.getCarPhotoUrls().remove(car.getCarPhotoUrls().get(i));
+            }
+            for (var url : carForm.getCarPhotoUrls()) {
+                car.getCarPhotoUrls().add(
+                        CarPhotoUrl.builder()
+                                .url(url)
+                                .car(car)
+                                .build()
+                );
+            }
+        }
+        if (carForm.getWithDriver() != null) {
+            car.setWithDriver(carForm.getWithDriver());
+        }
+        if (carForm.getDescription() != null) {
+            car.setDescription(carForm.getDescription());
+        }
+        if (carForm.getStart() != null) {
+            car.setStart(carForm.getStart());
+        }
+        if (carForm.getFinish() != null) {
+            car.setFinish(carForm.getFinish());
+        }
+        if (carForm.getPrice() != null) {
+            car.setPrice(carForm.getPrice());
+        }
+        if (carForm.getForHour() != null) {
+            car.setForHour(carForm.getForHour());
+        }
+        return CarDto.from(carRepository.save(car), false);
+    }
+
+    @Override
+    public CarDto getCarByIdForAdmin(Long id) throws CarNotFoundException {
+
+        return CarDto.from(getCarByIdAllDetails(id), true);
+
+    }
+
+    @Override
+    public List<CarDto> findCars(CarAdminForm car) throws CarBrandNotFoundException, CarModelNotFoundException {
+
+        return CarDto.from(carRepository.findCarsByParams(
+                car.getId(),
+                car.getName(),
+                car.getBrand() == null ? null : carBrandService.getBrandById(car.getBrand()),
+                car.getModel() == null ? null : carModelService.getModelById(car.getModel()),
+                car.getIsDeleted(),
+                car.getIsBlocked()
+        ), true);
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.itis.tripbook.annotation.Loggable;
 import ru.itis.tripbook.annotation.ResultLoggable;
 import ru.itis.tripbook.dto.book.BookForm;
+import ru.itis.tripbook.dto.car.CarEditForm;
 import ru.itis.tripbook.dto.car.CarForm;
 import ru.itis.tripbook.dto.review.ReviewForm;
 import ru.itis.tripbook.exception.*;
@@ -47,7 +48,7 @@ public class CarController {
         try {
             return ResponseEntity.ok().body(carService.saveCar(car));
         } catch (CarBrandNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (CarModelNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -80,11 +81,11 @@ public class CarController {
     public ResponseEntity<?> getCarById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok().body(carService.getCarById(id));
-        } catch (TransportNotFoundException e) {
+        } catch (CarNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (CarIsBlockedException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } catch (TransportIsBlockedException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } catch (TransportIsDeletedException e) {
+        } catch (CarIsDeletedException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
@@ -102,8 +103,8 @@ public class CarController {
                     )
             );
         } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } catch (TransportNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (CarNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
@@ -121,8 +122,8 @@ public class CarController {
                     )
             );
         } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } catch (TransportNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (CarNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
@@ -141,11 +142,11 @@ public class CarController {
                             user.getUser()
                     )
             );
-        } catch (TransportNotFoundException e) {
+        } catch (CarNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (CarIsBlockedException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } catch (TransportIsBlockedException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } catch (TransportIsDeletedException e) {
+        } catch (CarIsDeletedException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
@@ -160,8 +161,38 @@ public class CarController {
         review.setUser(user.getUser());
         try {
             return ResponseEntity.ok().body(reviewService.saveReview(id, review));
-        } catch (TransportNotFoundException e) {
+        } catch (CarNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    @Loggable
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCar(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok().body(
+                    carService.deleteCarById(id)
+            );
+        } catch (CarNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (CarIsDeletedException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
+    @Loggable
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/edit/{id}")
+    public ResponseEntity<?> editCar(
+            @PathVariable Long id,
+            @RequestBody CarEditForm carForm
+    ) {
+        try {
+            return ResponseEntity.ok().body(
+                    carService.editCar(id, carForm)
+            );
+        } catch (CarNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

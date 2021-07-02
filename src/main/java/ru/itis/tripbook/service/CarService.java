@@ -1,7 +1,9 @@
 package ru.itis.tripbook.service;
 
 import org.springframework.stereotype.Service;
+import ru.itis.tripbook.dto.admin.CarAdminForm;
 import ru.itis.tripbook.dto.car.CarDto;
+import ru.itis.tripbook.dto.car.CarEditForm;
 import ru.itis.tripbook.dto.car.CarForm;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.Car;
@@ -15,15 +17,21 @@ public interface CarService {
 
     List<CarDto> getBestCars(Long count);
 
-    CarDto getCarById(Long id) throws TransportNotFoundException, TransportIsBlockedException, TransportIsDeletedException;
+    CarDto getCarById(Long id) throws CarNotFoundException, CarIsBlockedException, CarIsDeletedException;
 
-    Car getCarByIdAllDetails(Long id) throws TransportNotFoundException;
+    Car getCarByIdAllDetails(Long id) throws CarNotFoundException;
 
-    CarDto deleteCarById(Long id) throws TransportNotFoundException, TransportIsDeletedException;
+    CarDto deleteCarById(Long id) throws CarNotFoundException, CarIsDeletedException;
 
-    CarDto restoreCarById(Long id) throws TransportNotFoundException, TransportIsNotDeletedException;
+    CarDto restoreCarById(Long id) throws CarNotFoundException, CarIsNotDeletedException;
 
-    CarDto banCarById(Long id) throws TransportNotFoundException, TransportIsBlockedException;
+    CarDto banCarById(Long id) throws CarNotFoundException, CarIsBlockedException;
 
-    CarDto unbanCarById(Long id) throws TransportNotFoundException, TransportIsNotBlockedException;
+    CarDto unbanCarById(Long id) throws CarNotFoundException, CarIsNotBlockedException;
+
+    CarDto editCar(Long id, CarEditForm carForm) throws CarNotFoundException;
+
+    CarDto getCarByIdForAdmin(Long id) throws CarNotFoundException;
+
+    List<CarDto> findCars(CarAdminForm car) throws CarBrandNotFoundException, CarModelNotFoundException;
 }

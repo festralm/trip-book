@@ -2,6 +2,7 @@ package ru.itis.tripbook.service;
 
 import ru.itis.tripbook.dto.admin.UserAdminForm;
 import ru.itis.tripbook.dto.user.UserDto;
+import ru.itis.tripbook.dto.user.UserEditForm;
 import ru.itis.tripbook.dto.user.UserSignUpForm;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.User;
@@ -48,9 +49,13 @@ public interface UserService {
 
     List<UserDto> findUsers(UserAdminForm user);
 
-    UserDto addToWishlist(Long carId, Long userId) throws UserNotFoundException, TransportNotFoundException;
+    UserDto addToWishlist(Long carId, Long userId) throws UserNotFoundException, CarNotFoundException;
 
-    UserDto deleteFromWishlist(Long carId, Long userId) throws UserNotFoundException, TransportNotFoundException;
+    UserDto deleteFromWishlist(Long carId, Long userId) throws UserNotFoundException, CarNotFoundException;
+
+    UserDto editUser(Long id, UserEditForm userForm) throws UserNotFoundException;
+
+    UserDto changePassword(Long id, String oldPassword, String newPassword) throws UserNotFoundException, OldPasswordIsWrongException;
 }
 
 

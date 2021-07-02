@@ -3,6 +3,7 @@ package ru.itis.tripbook.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.itis.tripbook.annotation.Loggable;
+import ru.itis.tripbook.annotation.SignatureLoggable;
 import ru.itis.tripbook.dto.car.CarBrandDto;
 import ru.itis.tripbook.exception.CarBrandNotFoundException;
 import ru.itis.tripbook.model.CarBrand;
@@ -22,7 +23,7 @@ public class CarBrandServiceImpl implements CarBrandService {
         return CarBrandDto.from(brands);
     }
 
-    @Loggable
+    @SignatureLoggable
     @Override
     public CarBrand getBrandById(Long brandId) throws CarBrandNotFoundException {
         return carBrandRepository.findById(brandId)
