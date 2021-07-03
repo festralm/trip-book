@@ -33,6 +33,9 @@ dependencies {
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    // https://mvnrepository.com/artifact/org.junit.vintage/junit-vintage-engine
+    testImplementation group: 'org.junit.vintage', name: 'junit-vintage-engine', version: '5.7.2'
+
 
 }
 
