@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
     private String chatId;
     private String senderId;
     private String recipientId;
