@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import ru.itis.tripbook.model.Role;
 import ru.itis.tripbook.model.User;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,19 +18,21 @@ import java.util.stream.Collectors;
 @Builder
 public class UserForCarDto {
     private Long id;
-    private String email;
     private String photoUrl;
+    private String name;
+    private Timestamp joined;
 
     public static UserForCarDto from(User user) {
         return UserForCarDto.builder()
                 .id(user.getId())
-                .email(user.getEmail())
                 .photoUrl(user.getPhotoUrl())
+                .name(user.getName())
+                .joined(user.getJoined())
                 .build();
     }
 
     public static List<UserForCarDto> from(List<User> users) {
-        return users.stream()
+        return users == null ? new ArrayList<>() : users.stream()
                 .map(UserForCarDto::from)
                 .collect(Collectors.toList());
     }

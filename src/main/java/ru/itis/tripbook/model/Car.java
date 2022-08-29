@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -40,7 +41,7 @@ public class Car {
     @Column
     private Boolean forHour;
 
-    @Column
+    @Column(length = 1000)
     private String description;
 
     @Column
@@ -65,4 +66,10 @@ public class Car {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "car" )
+    private List<Book> books;
+
+    @OneToMany(mappedBy = "car")
+    private List<Review> reviews;
 }

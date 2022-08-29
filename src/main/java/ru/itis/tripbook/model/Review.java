@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table
@@ -14,17 +13,19 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CarModel {
+public class Review {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private String name;
+    private String text;
 
     @ManyToOne
-    @JoinColumn(name = "brand_id")
-    private CarBrand brand;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @OneToMany(mappedBy = "brand"  )
-    private List<Car> cars;
+    @ManyToOne
+    @JoinColumn(name = "car_id")
+    private Car car;
 }

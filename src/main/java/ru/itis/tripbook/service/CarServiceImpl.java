@@ -4,12 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.itis.tripbook.controller.CarController;
+import ru.itis.tripbook.annotation.Loggable;
+import ru.itis.tripbook.annotation.ResultLoggable;
+import ru.itis.tripbook.annotation.SignatureLoggable;
+import ru.itis.tripbook.dto.BookDto;
 import ru.itis.tripbook.dto.CarDto;
 import ru.itis.tripbook.dto.CarForm;
-import ru.itis.tripbook.exception.CarBrandNotFoundException;
-import ru.itis.tripbook.exception.CarModelNotFoundException;
-import ru.itis.tripbook.exception.UserNotFoundException;
+import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.Car;
 import ru.itis.tripbook.model.CarPhotoUrl;
 import ru.itis.tripbook.repository.CarRepository;
@@ -20,9 +21,6 @@ import java.util.List;
 
 @Service
 public class CarServiceImpl implements CarService {
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(CarService.class);
-
     @Autowired
     private CarRepository carRepository;
 
@@ -33,11 +31,11 @@ public class CarServiceImpl implements CarService {
     private CarModelService carModelService;
 
     @Override
-    public CarDto saveCar(CarForm carForm) throws CarBrandNotFoundException, CarModelNotFoundException {
-
+    @ResultLoggable
+    public CarDto saveCar(CarForm carForm)
+            throws CarBrandNotFoundException, CarModelNotFoundException {
         if (carForm.getCarPhotoUrls() == null || carForm.getCarPhotoUrls().size() == 0) {
             carForm.setCarPhotoUrls( Collections.singletonList("default-car.png"));
-            LOGGER.info("Setting default carPhoto");
         }
 
         var photosList = new ArrayList<CarPhotoUrl>();
@@ -48,30 +46,60 @@ public class CarServiceImpl implements CarService {
                             .build()
             );
         }
-        LOGGER.info("Mapped string urls to list of CarPhotoUrl");
 
         var car = Car.builder()
-                        .description(carForm.getDescription())
-                        .finish(carForm.getFinish())
-                        .forHour(carForm.getForHour())
-                        .isBlocked(false)
-                        .isDeleted(false)
-                        .name(carForm.getName())
-                        .price(carForm.getPrice())
-                        .rating(5.0)
-                        .start(carForm.getStart())
-                        .withDriver(carForm.getWithDriver())
-                        .brand(carBrandService.getBrandById(carForm.getBrand()))
-                        .model(carModelService.getModelById(carForm.getModel()))
-                        .user(carForm.getUser())
-                        .carPhotoUrls(photosList)
-                        .build();
+                .description(carForm.getDescription())
+                .finish(carForm.getFinish())
+                .forHour(carForm.getForHour())
+                .isBlocked(false)
+                .isDeleted(false)
+                .name(carForm.getName())
+                .price(carForm.getPrice())
+                .rating(5.0)
+                .start(carForm.getStart())
+                .withDriver(carForm.getWithDriver())
+                .brand(carBrandService.getBrandById(carForm.getBrand()))
+                .model(carModelService.getModelById(carForm.getModel()))
+                .user(carForm.getUser())
+                .carPhotoUrls(photosList)
+                .build();
         for (var url : photosList) {
-           url.setCar(car);
+            url.setCar(car);
         }
         var newCar = carRepository.save(car);
         var carDto = CarDto.from(newCar);
-        LOGGER.info("Saved new car, returning CarDto");
         return carDto;
+    }
+
+    @Override
+    @Loggable
+    public List<CarDto> getBestCars(Long count) {
+        var cars = carRepository.getBestOfCount(count);
+        return CarDto.from(cars);
+    }
+
+    @Override
+    @Loggable
+    public CarDto getCarById(Long id)
+            throws
+            TransportNotFoundException,
+            TransportIsBlockedException,
+            TransportIsDeletedException {
+        var car = getCarByIdAllDetails(id);
+        var carDto = CarDto.from(car);
+        if (car.getIsBlocked()) {
+            throw new TransportIsBlockedException(id);
+        }
+        if (car.getIsDeleted()) {
+            throw new TransportIsDeletedException(id);
+        }
+        return carDto;
+    }
+
+    @Override
+    @SignatureLoggable
+    public Car getCarByIdAllDetails(Long id) throws TransportNotFoundException {
+        return carRepository.findById(id)
+                .orElseThrow(() -> new TransportNotFoundException(id));
     }
 }

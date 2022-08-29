@@ -21,9 +21,9 @@ public class CarBrand {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "brand", fetch = FetchType.EAGER   )
+    @OneToMany(mappedBy = "brand"  )
     private List<Car> cars;
 
-    @OneToMany(mappedBy = "brand", fetch = FetchType.EAGER   )
+    @OneToMany(mappedBy = "brand" )
     private List<CarModel> models;
 }

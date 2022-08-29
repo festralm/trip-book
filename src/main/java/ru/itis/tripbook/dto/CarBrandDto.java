@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.itis.tripbook.model.CarBrand;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class CarBrandDto {
     }
 
     public static List<CarBrandDto> from(List<CarBrand> carBrands) {
-        return carBrands.stream()
+        return carBrands == null ? new ArrayList<>() : carBrands.stream()
                 .map(CarBrandDto::from)
                 .collect(Collectors.toList());
     }

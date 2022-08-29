@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
@@ -36,7 +37,24 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER   )
+    @OneToMany(mappedBy = "user" )
     private List<Car> cars;
 
+    @OneToMany(mappedBy = "user" )
+    private List<Book> books;
+
+    @ManyToMany
+    private List<Car> wishedCars;
+
+    @Column
+    private String name;
+
+    @Column
+    private Timestamp joined;
+
+    @Column
+    private String description;
+
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews;
 }

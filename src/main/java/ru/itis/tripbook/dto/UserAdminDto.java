@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.itis.tripbook.model.Book;
 import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.model.Role;
 
@@ -17,23 +16,27 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDto {
+public class UserAdminDto {
     private Long id;
     private String email;
     private String photoUrl;
+    private Boolean isBlocked;
+    private Boolean isDeleted;
     private Role role;
     private List<CarForUserDto> cars;
     private List<CarForUserDto> wishlist;
     private List<CarBookForUserDto> books;
     private String name;
-    private Timestamp joined;
     private String description;
+    private Timestamp joined;
 
-    public static UserDto from(User user) {
-        return UserDto.builder()
+    public static UserAdminDto from(User user) {
+        return UserAdminDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .photoUrl(user.getPhotoUrl())
+                .isBlocked(user.getIsBlocked())
+                .isDeleted(user.getIsDeleted())
                 .role(user.getRole())
                 .cars(CarForUserDto.from(user.getCars()))
                 .wishlist(CarForUserDto.from(user.getWishedCars()))
@@ -44,25 +47,27 @@ public class UserDto {
                 .build();
     }
 
-    public static List<UserDto> from(List<User> users) {
+    public static List<UserAdminDto> from(List<User> users) {
         return users == null ? new ArrayList<>() : users.stream()
-                .map(UserDto::from)
+                .map(UserAdminDto::from)
                 .collect(Collectors.toList());
     }
 
     @Override
     public String toString() {
-        return "UserDto{" +
+        return "UserAdminDto{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", photoUrl='" + photoUrl + '\'' +
+                ", isBlocked=" + isBlocked +
+                ", isDeleted=" + isDeleted +
                 ", role=" + role +
                 ", " + cars.size() + " cars" +
                 ", " + wishlist.size() + " wishlist" +
-                ", " + books.size() + " books" +
+                ", books=" + books +
                 ", name='" + name + '\'' +
-                ", joined=" + joined +
                 ", description='" + description + '\'' +
+                ", joined=" + joined +
                 '}';
     }
 }
