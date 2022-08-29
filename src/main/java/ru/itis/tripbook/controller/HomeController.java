@@ -40,7 +40,7 @@ public class HomeController {
             } catch (UserIsDeletedException e) {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             } catch (UserNotFoundException e) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } else {
             return new ResponseEntity<>(HttpStatus.NON_AUTHORITATIVE_INFORMATION);

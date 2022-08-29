@@ -1,7 +1,7 @@
 package ru.itis.tripbook.service;
 
 import org.springframework.stereotype.Service;
-import ru.itis.tripbook.dto.CarModelDto;
+import ru.itis.tripbook.dto.car.CarModelDto;
 import ru.itis.tripbook.exception.CarModelNotFoundException;
 import ru.itis.tripbook.model.CarModel;
 

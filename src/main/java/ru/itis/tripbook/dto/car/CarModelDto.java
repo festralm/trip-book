@@ -1,10 +1,9 @@
-package ru.itis.tripbook.dto;
+package ru.itis.tripbook.dto.car;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.itis.tripbook.model.CarBrand;
 import ru.itis.tripbook.model.CarModel;
 
 import java.util.ArrayList;

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -69,4 +71,10 @@ public class Car {
 
     @OneToMany(mappedBy = "car")
     private List<Review> reviews;
+
+    @Column
+    private Double lat;
+
+    @Column
+    private Double lng;
 }

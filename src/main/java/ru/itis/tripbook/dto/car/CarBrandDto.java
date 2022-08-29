@@ -1,4 +1,4 @@
-package ru.itis.tripbook.dto;
+package ru.itis.tripbook.dto.car;
 
 
 import lombok.AllArgsConstructor;

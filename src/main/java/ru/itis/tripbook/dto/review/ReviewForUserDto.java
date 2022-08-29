@@ -1,12 +1,15 @@
-package ru.itis.tripbook.dto;
+package ru.itis.tripbook.dto.review;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.itis.tripbook.dto.car.CarForUserDto;
+import ru.itis.tripbook.model.CarPhotoUrl;
 import ru.itis.tripbook.model.Review;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,32 +17,32 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReviewForCarDto {
+public class ReviewForUserDto {
     private Long id;
     private String text;
-    private UserForCarDto user;
+    private CarForUserDto car;
     private Integer rating;
     private Timestamp datetime;
 
-
-    public static ReviewForCarDto from(Review review) {
-        return ReviewForCarDto.builder()
+    public static ReviewForUserDto from(Review review, boolean allDetails) {
+        return ReviewForUserDto.builder()
                 .id(review.getId())
                 .text(review.getText())
+                .car(CarForUserDto.from(review.getCar(), allDetails))
                 .rating(review.getRating())
                 .datetime(review.getDatetime())
                 .build();
     }
 
-    public static List<ReviewForCarDto> from(List<Review> reviews) {
-        return reviews
+    public static List<ReviewForUserDto> from(List<Review> reviews, boolean allDetails) {
+        return reviews == null ? new ArrayList<>() : reviews
                 .stream()
-                .filter(x ->
+                .filter(x -> allDetails ||
                         !x.getCar().getIsBlocked() &&
                                 !x.getCar().getIsDeleted() &&
                                 !x.getUser().getIsDeleted() &&
                                 !x.getUser().getIsBlocked())
-                .map(ReviewForCarDto::from)
+                .map(x -> ReviewForUserDto.from(x, allDetails))
                 .collect(Collectors.toList());
     }
 }

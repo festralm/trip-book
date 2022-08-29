@@ -1,23 +1,19 @@
 package ru.itis.tripbook.controller;
 
-import lombok.extern.java.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.itis.tripbook.annotation.Loggable;
 import ru.itis.tripbook.annotation.ResultLoggable;
-import ru.itis.tripbook.dto.UserDto;
+import ru.itis.tripbook.dto.user.Passwords;
+import ru.itis.tripbook.dto.user.UserEditForm;
+import ru.itis.tripbook.exception.OldPasswordIsWrongException;
 import ru.itis.tripbook.exception.UserIsBlockedException;
 import ru.itis.tripbook.exception.UserIsDeletedException;
 import ru.itis.tripbook.exception.UserNotFoundException;
-import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.security.UserDetailsImpl;
 import ru.itis.tripbook.service.UserService;
 
@@ -39,7 +35,7 @@ public class ProfileController {
         } catch (UserIsDeletedException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -54,6 +50,59 @@ public class ProfileController {
         } catch (UserIsDeletedException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @ResultLoggable
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/profile")
+    public ResponseEntity<?> editUser(
+            @AuthenticationPrincipal UserDetailsImpl user,
+            @RequestBody UserEditForm userForm
+    ) {
+        try {
+            return ResponseEntity.ok().body(
+                    userService.editUser(user.getUser().getId(), userForm)
+            );
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @ResultLoggable
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/profile")
+    public ResponseEntity<?> deleteThis(@AuthenticationPrincipal UserDetailsImpl user) {
+        try {
+            return ResponseEntity.ok().body(
+                    userService.deleteUserById(user.getUser().getId())
+            );
+        } catch (UserIsDeletedException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @ResultLoggable
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            @AuthenticationPrincipal UserDetailsImpl user,
+            @RequestBody Passwords passwords
+            ) {
+        try {
+            return ResponseEntity.ok().body(
+                    userService.changePassword(
+                            user.getUser().getId(),
+                            passwords.getOldPassword(),
+                            passwords.getNewPassword()
+                    )
+            );
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (OldPasswordIsWrongException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }

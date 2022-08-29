@@ -1,4 +1,4 @@
-package ru.itis.tripbook.dto;
+package ru.itis.tripbook.dto.car;
 
 import lombok.Data;
 import ru.itis.tripbook.model.CarBrand;
@@ -26,4 +26,6 @@ public class CarForm {
     private Timestamp finish;
     private List<String> carPhotoUrls;
     private User user;
+    private Double lat;
+    private Double lng;
 }
