@@ -33,6 +33,9 @@ public class UserForCarDto {
 
     public static List<UserForCarDto> from(List<User> users) {
         return users == null ? new ArrayList<>() : users.stream()
+                .filter(x ->
+                        !x.getIsBlocked() &&
+                                !x.getIsDeleted())
                 .map(UserForCarDto::from)
                 .collect(Collectors.toList());
     }

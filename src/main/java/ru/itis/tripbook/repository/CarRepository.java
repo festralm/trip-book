@@ -10,15 +10,17 @@ import java.util.List;
 public interface CarRepository extends JpaRepository<Car, Long> {
 
     @Query(nativeQuery = true,
-            value = "select * from car " +
+            value = "select car.* from car " +
                     "left join account on car.user_id = account.id " +
+                    "left join review on car.id = review.car_id " +
                     "where " +
                     "car.finish >= now() and " +
                     "car.is_blocked = false and " +
                     "car.is_deleted = false and " +
                     "account.is_blocked = false and " +
                     "account.is_deleted = false " +
-                    "order by car.rating desc " +
+                    "group by car.id " +
+                    "order by count(review.id) desc " +
                     "limit :count")
     public List<Car> getBestOfCount(@Param("count") Long count);
 }

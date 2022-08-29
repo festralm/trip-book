@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.itis.tripbook.model.Book;
 import ru.itis.tripbook.model.User;
 import ru.itis.tripbook.model.Role;
 
@@ -28,6 +27,7 @@ public class UserDto {
     private String name;
     private Timestamp joined;
     private String description;
+    private List<ReviewForUserDto> reviews;
 
     public static UserDto from(User user) {
         return UserDto.builder()
@@ -41,11 +41,15 @@ public class UserDto {
                 .name(user.getName())
                 .joined(user.getJoined())
                 .description(user.getDescription())
+                .reviews(ReviewForUserDto.from(user.getReviews()))
                 .build();
     }
 
     public static List<UserDto> from(List<User> users) {
         return users == null ? new ArrayList<>() : users.stream()
+                .filter(x ->
+                        !x.getIsBlocked() &&
+                                !x.getIsDeleted())
                 .map(UserDto::from)
                 .collect(Collectors.toList());
     }

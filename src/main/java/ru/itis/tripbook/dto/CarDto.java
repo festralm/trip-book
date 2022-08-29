@@ -31,9 +31,18 @@ public class CarDto {
     private UserForCarDto user;
     private String rating;
     private List<BookDto> books;
+    private List<ReviewForCarDto> reviews;
 
 
     public static CarDto from(Car car) {
+        var rating = 0.0;
+        if (car.getReviews().size() != 0) {
+            for (var review :
+                    car.getReviews()) {
+                rating += review.getRating();
+            }
+            rating = ((double) rating) / car.getReviews().size();
+        }
         return CarDto.builder()
                 .id(car.getId())
                 .withDriver(car.getWithDriver())
@@ -54,13 +63,17 @@ public class CarDto {
                                 .collect(Collectors.toList())
                 )
                 .user(UserForCarDto.from(car.getUser()))
-                .rating(String.format(Locale.US, "%.2f", car.getRating()))
+                .rating(String.format(Locale.US, "%.2f", rating))
                 .books(BookDto.from(car.getBooks()))
+                .reviews(ReviewForCarDto.from(car.getReviews()))
                 .build();
     }
 
     public static List<CarDto> from(List<Car> cars) {
         return cars == null ? new ArrayList<>() : cars.stream()
+                .filter(x ->
+                        !x.getIsBlocked() &&
+                        !x.getIsDeleted())
                 .map(CarDto::from)
                 .collect(Collectors.toList());
     }

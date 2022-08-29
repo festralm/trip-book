@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.itis.tripbook.annotation.Loggable;
 import ru.itis.tripbook.annotation.ResultLoggable;
 import ru.itis.tripbook.annotation.SignatureLoggable;
-import ru.itis.tripbook.dto.BookDto;
-import ru.itis.tripbook.dto.CarDto;
-import ru.itis.tripbook.dto.CarForm;
+import ru.itis.tripbook.dto.*;
 import ru.itis.tripbook.exception.*;
 import ru.itis.tripbook.model.Car;
 import ru.itis.tripbook.model.CarPhotoUrl;
@@ -18,6 +16,7 @@ import ru.itis.tripbook.repository.CarRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CarServiceImpl implements CarService {
@@ -55,7 +54,6 @@ public class CarServiceImpl implements CarService {
                 .isDeleted(false)
                 .name(carForm.getName())
                 .price(carForm.getPrice())
-                .rating(5.0)
                 .start(carForm.getStart())
                 .withDriver(carForm.getWithDriver())
                 .brand(carBrandService.getBrandById(carForm.getBrand()))
@@ -67,8 +65,7 @@ public class CarServiceImpl implements CarService {
             url.setCar(car);
         }
         var newCar = carRepository.save(car);
-        var carDto = CarDto.from(newCar);
-        return carDto;
+        return CarDto.from(newCar);
     }
 
     @Override
@@ -102,4 +99,5 @@ public class CarServiceImpl implements CarService {
         return carRepository.findById(id)
                 .orElseThrow(() -> new TransportNotFoundException(id));
     }
+
 }
