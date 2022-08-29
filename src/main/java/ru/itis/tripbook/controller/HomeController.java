@@ -46,5 +46,4 @@ public class HomeController {
             return new ResponseEntity<>(HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
-
 }

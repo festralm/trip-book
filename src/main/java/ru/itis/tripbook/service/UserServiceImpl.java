@@ -22,6 +22,7 @@ import ru.itis.tripbook.repository.UserRepository;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(
                         () -> new UsernameNotFoundException(
-                        String.format("Email %s not found.", email)
+                                String.format("Email %s not found.", email)
                         )
                 );
     }
@@ -159,6 +160,45 @@ public class UserServiceImpl implements UserService {
             UserNotFoundException
     {
         var user = getUserByIdAllDetails(id);
+        user.setBooks(
+                user
+                        .getBooks()
+                        .stream()
+                        .filter(
+                                x ->
+                                        !x.getCar().getUser().getIsBlocked() &&
+                                                !x.getCar().getUser().getIsDeleted() &&
+                                                !x.getCar().getIsBlocked() &&
+                                                !x.getCar().getIsDeleted()
+                        )
+                        .collect(Collectors.toList())
+        );
+        user.setWishedCars(
+                user
+                        .getWishedCars()
+                        .stream()
+                        .filter(
+                                x ->
+                                        !x.getUser().getIsDeleted() &&
+                                                !x.getUser().getIsBlocked() &&
+                                                !x.getIsDeleted() &&
+                                                !x.getIsBlocked()
+                        )
+                        .collect(Collectors.toList())
+
+        );
+        user.setCars(
+                user
+                        .getCars()
+                        .stream()
+                        .filter(
+                                x ->
+                                        !x.getIsDeleted()
+                                                && !x.getIsBlocked()
+                        )
+                        .collect(Collectors.toList())
+
+        );
         var userDto = UserDto.from(user);
         if (user.getIsBlocked()) {
             throw new UserIsBlockedException(user.getEmail());
